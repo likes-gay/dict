@@ -1,7 +1,53 @@
-# Request
-num_of_words - Return number of words in dictionary INT
-get_word(word ID) - Return creation data and time UNIX TIME STAMP, number of up doots INT, actual word STR, uploader, definition STR.
+# GET
+`/api/num_of_words`
+```typescript
+{
+	totalWords: number;
+}
+```
 
-# Post
-save_word - actual word STR, definition STR, uploader
-update_updoot(word ID) - updates the updoot count for a specific word
+`/api/get_word?size=20&offset20&sort=updoots`
+```typescript
+{
+    id: number;
+    word: string;
+    description: string;
+    creationDate: number; //Unix timestamp
+    updoots: number;
+    uploader: string;
+}
+```
+
+`/api/get_random_word`
+```typescript
+{
+	word: {
+		id: number;
+		word: string;
+		description: string;
+		creationDate: number; //Unix timestamp
+		updoots: number;
+		uploader: string;
+	},
+	realRandomWord: string;
+}
+```
+
+# POST
+`/api/upload_word`
+```typescript
+{
+	word: string;
+	description: string;
+	creationDate: number;
+	uploader: string;
+}
+```
+
+`/api/update_updoot/[word ID]`
+```typescript
+{
+	id: number;
+	isUpdooted: boolean;
+}
+```
