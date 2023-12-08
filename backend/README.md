@@ -1,12 +1,14 @@
-# GET
-`/api/num_of_words`
+# Endpoints
+
+## GET
+`/num_of_words`
 ```typescript
 {
 	totalWords: number;
 }
 ```
 
-`/api/get_word?size=20&offset20&sort=updoots`
+`/get_word?size=20&offset20&sort=updoots`
 ```typescript
 {
     id: number;
@@ -18,7 +20,7 @@
 }
 ```
 
-`/api/get_random_word`
+`/get_random_word`
 ```typescript
 {
 	word: {
@@ -33,8 +35,8 @@
 }
 ```
 
-# POST
-`/api/upload_word`
+## POST
+`/upload_word`
 ```typescript
 {
 	word: string;
@@ -44,7 +46,7 @@
 }
 ```
 
-`/api/update_updoot/[word ID]`
+`/update_updoot/[word ID]`
 ```typescript
 {
 	id: number;
