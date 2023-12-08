@@ -13,7 +13,7 @@ app	= FastAPI()
 
 app.add_middleware(
 	CORSMiddleware,
-	allow_origins=["https://likes.gay", "http://localhost:5500"],
+	allow_origins=["*"],
 	allow_methods=["GET", "POST"],
 	allow_headers=["Content-Type"],
 )
@@ -140,7 +140,10 @@ async def get_range_of_words(offset: int = 0, size: int = 5):
 @app.get("/lookup_id_of_word/{word}")
 async def lookup_id(word: str):
 	data = read_json()
-	for word in data:
-		if word["word"] == word:
-			return (word["id"])
-	raise HTTPException(status_code=404, detail="Item not found	lol")
+	
+	for line in data:
+		if line["word"].lower() == word.lower():
+			return {
+				"id": line["id"]
+			}
+	raise HTTPException(status_code=404, detail="Item not found lol")
