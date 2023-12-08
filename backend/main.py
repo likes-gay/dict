@@ -65,13 +65,17 @@ async def get_word(id: int):
 	raise HTTPException(status_code=404, detail="Item not found	lol")
 
 @app.post("/upload_word", status_code=200)
-async def upload_word(newWord: UploadWordFormat, req: Request):
+async def upload_word(newWord: UploadWordFormat):
 	with open("data.json", "r+") as f:
 		file_data =	read_json()
 		newWordDict = newWord.model_dump()
 		
 		newWordDict["id"] = file_data[-1]["id"] + 1
 		file_data.append(newWordDict)
+		
+		if not newWordDict["creationDate"]:
+			newWordDict["creationDate"] = int(time.time())
+		
 		f.seek(0)
 		f.write(json.dumps(file_data))
 		f.truncate()
