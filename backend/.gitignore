@@ -1,4 +1,6 @@
 # Force people to use our website
 
 data.json
+db_data.json
 __pycache__
+.env
