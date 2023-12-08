@@ -32,6 +32,19 @@ body {
 	}
 }
 
+.loading-text {
+	appearance: none;
+	border: none;
+	width: 1ch;
+	height: 1em;
+	opacity: 0.5;
+}
+
+.loading-text::-moz-progress-bar,
+.loading-text::-webkit-progress-value {
+	background: gray;
+}
+
 .page-intro {
 	text-align: center;
 	display: flex;
@@ -154,6 +167,9 @@ body {
 	font-size: 0.8em;
 	position: absolute;
 	z-index: 1;
+}
+
+.add-new-word form {
 }
 
 .input {

@@ -1,0 +1,13 @@
+[Unit]
+Description=Dict API Service
+After=network.target
+
+[Service]
+Type=simple
+User=luke
+WorkingDirectory=/home/luke/dict/backend
+ExecStart=/home/luke/.local/bin/uvicorn main:app --port 3000 
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

@@ -1,4 +1,4 @@
-import React, { Children, PropsWithChildren, ReactElement, ReactNode, useEffect, useId, useMemo, useRef, useState } from "react";
+import React, { AriaRole, Children, PropsWithChildren, ReactElement, ReactNode, useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 type AriaRelationshipOps = "label" | "description" | "details" | "none";
@@ -13,6 +13,7 @@ export default function Tooltip(props: TooltipProps) {
 	const [showTooltip, setShowTooltip] = useState(false);
 	const interest = useRef<HTMLElement>(null);
 	const tooltip = useRef<HTMLDivElement>(null);
+	const intervalRef = useRef<NodeJS.Timeout | null>(null);
 	const id = useId();
 
 	const ariaAttribute: Record<AriaRelationshipOps, string> = {
@@ -27,11 +28,22 @@ export default function Tooltip(props: TooltipProps) {
 			if(e.key != "Escape") return;
 			setShowTooltip(false);
 		}
+
+		function windowClick(e: MouseEvent) {
+			//console.log("Click contain:", tooltip.current == e.target || tooltip.current?.contains(e.target as any));
+			//if(tooltip.current?.contains(e.target as Node)) return;
+			//setShowTooltip(false);
+		}
 		
-		if(showTooltip) window.addEventListener("keydown", onEsc);
+		if(showTooltip) {
+			document.addEventListener("keydown", onEsc);
+			document.addEventListener("click", windowClick);
+		}
 
-		return () => window.removeEventListener("keydown", onEsc);
-
+		return () => {
+			document.removeEventListener("keydown", onEsc);
+			document.removeEventListener("click", windowClick);
+		}
 	}, [showTooltip]);
 
 	function GetToolTipPos() {
@@ -47,23 +59,44 @@ export default function Tooltip(props: TooltipProps) {
 		};
 	}
 
+	function onClick() {
+		props.children.props.onClick();
+		setShowTooltip(true);
+	}
+
 	function onFocus() {
 		setShowTooltip(true);
 	}
 
-	function onBlur() {
+	function onBlur(e: React.FocusEvent<HTMLElement, Element>) {
 		setShowTooltip(false);
 	}
 
-	function onLongPress() {
-		setShowTooltip(true);
+	function onTouchStart(e: React.TouchEvent<HTMLElement>) {
+		return;
+	//	if(showTooltip) return;
+	//	intervalRef.current = setTimeout(() => {
+	//		intervalRef.current = null;
+	//	}, 300);
+	}
+
+	function onTouchEnd(e: React.TouchEvent<HTMLElement>) {
+		return;
+	//	if(showTooltip) return;
+	//	if(intervalRef.current) {
+	//		clearTimeout(intervalRef.current);
+	//		intervalRef.current = null;
+	//		return;
+	//	};
+	//	e.preventDefault();
+	//	e.stopPropagation();
 	}
 
 	function onMouseEnter() {
 		setShowTooltip(true);
 	}
 
-	function onMouseLeave(e: React.MouseEvent<unknown>) {
+	function onMouseLeave(e: React.MouseEvent<HTMLElement>) {
 		if(e.target != document.activeElement)
 			setShowTooltip(false);
 	}
@@ -77,9 +110,11 @@ export default function Tooltip(props: TooltipProps) {
 						[ariaAttribute[props.ariaRelationships || "description"]]: showTooltip && props.ariaRelationships != "none" ? id : undefined,
 						tabIndex: props.children.type != "button" ? 0 : undefined,
 						ref: interest,
+						onClick,
 						onFocus,
 						onBlur,
-						onLongPress,
+						onTouchStart,
+						onTouchEnd,
 						onMouseEnter,
 						onMouseLeave
 					}
