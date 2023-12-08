@@ -14,14 +14,13 @@ export default function	Home() {
 
 	useEffect(() => {
 		(async () => {
-			const json: Word[] = await fetch("http://localhost:300/get_all_words?orderby=id").then(x => x.json());
-			console.log(json);
+			const json: Word[] = await fetch("https://api.likes.gay/get_all_words?orderby=id").then(x => x.json());
 			setAllWords(json);
 		})();
 	}, []);
 
 	useEffect(() => {
-		if(!allWords?.length) return;
+		if(!allWords?.length || !location.hash) return;
 
 		document.getElementById(
 			location.hash.substring(1)
@@ -34,7 +33,7 @@ export default function	Home() {
 	//	if(max !== 0 && currentWords.length >= max) return;
 	//
 	//	(async () => {
-	//		const data: GetRangeOfWords = await fetch(`http://localhost:3000/get_range_of_words?offset=${offset * 5}&size=5`, {
+	//		const data: GetRangeOfWords = await fetch(`https://api.likes.gay/get_all_words/get_range_of_words?offset=${offset * 5}&size=5`, {
 	//			signal: signal.signal
 	//		}).then(x => x.json());
 	//
@@ -65,7 +64,7 @@ export default function	Home() {
 	//}, [target]);
 
 	async function GetAllWords() {
-		const json: Word[] = await fetch("http://localhost:300/get_all_words?orderby=id").then(x => x.json());
+		const json: Word[] = await fetch("https://api.likes.gay/get_all_words?orderby=id").then(x => x.json());
 
 		console.log(json);
 

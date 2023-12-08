@@ -1,6 +1,7 @@
 import React, {	useState } from	"react"
 import { Word }	from "./types";
 import Tooltip from	"./components/Tooltip";
+import { createDescriptionDomId, createWordDomId } from "./hooks/utils";
 
 type DfnAreaProps =	{
 	word: Word;
@@ -8,8 +9,8 @@ type DfnAreaProps =	{
 
 export default function	DfnArea({ word }: DfnAreaProps)	{
 	const creationDateAsDate = new Date(word.creationDate);
-	const domId	= `${word.word.replaceAll(/\s/g, "_")}-${word.id}`;
-	const descriptionDomId = `${word.word}-description-${word.id}`;
+	const domId	= createWordDomId(word);
+	const descriptionDomId = createDescriptionDomId(word);
 
 	const [updootPressed, setUpdootPressed]	= useState(false);
 	const [isSpeaking, setIsSpeaking] =	useState(false);
@@ -84,7 +85,14 @@ export default function	DfnArea({ word }: DfnAreaProps)	{
 			</header>
 
 			<p className="dfn-description" role="definition" id={descriptionDomId}>
-				{word.description}
+				{
+					word.description.split("\n").map((text, i) => (
+						<React.Fragment key={i}>
+							{text}
+							<br />
+						</React.Fragment>
+					))
+				}
 			</p>
 		</article>
 	)

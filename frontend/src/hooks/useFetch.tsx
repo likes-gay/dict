@@ -6,7 +6,7 @@ type UseFetchData<T> = {
 
 export function useFetch<T>(url: string, ops?: RequestInit): UseFetchData<T> {
     const [data, setData] = useState<T>();
-	const newUrl = new URL(url, "http://localhost:3000"); //http://localhost:3000 http://192.168.1.140:3000
+	const newUrl = new URL(url, "https://api.likes.gay/get_all_words"); //https://api.likes.gay/get_all_words http://192.168.1.140:3000
 
     useEffect(() => {
         const abortController = new AbortController();

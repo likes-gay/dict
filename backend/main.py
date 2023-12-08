@@ -95,10 +95,10 @@ async def upload_new_word(newWord: UploadWordFormat):
 
 	return(record)
 
-@app.delete("/delete_word/{id}")
+@app.delete("/delete_word", status=204)
 async def delete(req: DeleteWord):
 	if req.secretKey != getenv("SECRET_KEY"):
-		raise HTTPException(403, detail="Unauthorised, invalide secret key")
+		raise HTTPException(403, detail="Unauthorised, invalid secret key")
 	
 	
 		

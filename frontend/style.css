@@ -169,10 +169,34 @@ body {
 	z-index: 1;
 }
 
-.add-new-word form {
+.eror-box {
+	background: red;
+	color: black;
+	padding: 0.75em;
 }
 
-.input {
+.add-new-word form {
+	width: 50svw;
+	margin: 1em auto;
+}
+
+.add-new-word .required-text {
+	color: red;
+}
+
+.add-new-word label {
+	display: block;
+	margin-right: 2ch;
+}
+
+.add-new-word .input {
+	margin-top: 0.3rem;
+	margin-bottom: 1.25rem;
 	background: #183CFF;
 	border: 2px #001DBB solid;
+}
+
+.add-new-word button {
+	margin-top: 1em;
+	display: block;
 }
