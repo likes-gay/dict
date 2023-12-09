@@ -12,6 +12,7 @@ from tinydb	import TinyDB, Query
 from tinydb.operations import increment
 
 from os import getenv
+from fastapi.staticfiles import StaticFiles
 
 db = TinyDB("db_data.json")
 app	= FastAPI()
@@ -51,17 +52,15 @@ class DirEnum(str, Enum):
 
 # -------------------------------------------
 
-@app.get("/", status_code=418)
-async def root():
-	return {"I'm a": "teapot"}
+app.mount("/", StaticFiles(directory="../static", html=True), name="static")
 
 # -------------------------------------------
 
-@app.get("/num_of_words")
+@app.get("/api/num_of_words")
 async def count_of_words():
 	return {"totalWords": len(db)}
 
-@app.post("/upload_word", status_code=200)
+@app.post("/api/upload_word", status_code=200)
 async def upload_new_word(newWord: UploadWordFormat):
 	#check if word is empty
 	if newWord.word	== "":
@@ -95,16 +94,12 @@ async def upload_new_word(newWord: UploadWordFormat):
 
 	return(record)
 
-@app.delete("/delete_word", status=204)
+@app.delete("/api/delete_word")
 async def delete(req: DeleteWord):
 	if req.secretKey != getenv("SECRET_KEY"):
-		raise HTTPException(403, detail="Unauthorised, invalid secret key")
-	
-	
-		
+		raise HTTPException(status_code=403, detail="Unauthorised, invalid secret key")
 
-
-@app.post("/update_updoot")
+@app.post("/api/update_updoot")
 async def update_words_updoot_count(req: UpdateUpdoot):
 	if req.isUpdooted == None:
 		raise HTTPException(status_code=400, detail="isUpdooted	cannot be None")
@@ -118,7 +113,7 @@ async def update_words_updoot_count(req: UpdateUpdoot):
 	response = db.search(Query().id	== req.id)
 	return(response[0])
 		
-@app.get("/get_word/{id}")
+@app.get("/api/get_word/{id}")
 async def get_word_by_ID(id: int):
 	response = db.search(Query().id	== id)
 	
@@ -127,7 +122,7 @@ async def get_word_by_ID(id: int):
 	else:
 		raise HTTPException(status_code=404, detail="Item not found	lol")
 
-@app.get("/get_all_words")
+@app.get("/api/get_all_words")
 async def get_all_words(order_by: str = "id", dir: DirEnum = "desc"):
 	valid_order_by = "id"
 
@@ -147,7 +142,7 @@ async def get_all_words(order_by: str = "id", dir: DirEnum = "desc"):
 	return sorted(db.all(),	key=lambda x: x[valid_order_by])
 
 
-@app.get("/get_range_of_words")
+@app.get("/api/get_range_of_words")
 async def get_range_of_words(offset: int = 0, size:	int	= 5):
 	data = db.all()
 
@@ -162,10 +157,10 @@ async def get_range_of_words(offset: int = 0, size:	int	= 5):
 
 	return {
 		"dictWords": data[offset : offset +	size],
-		"max": len(all_words())
+		"max": len(db)
 	}
 	
-@app.get("/lookup_id/{word}")
+@app.get("/api/lookup_id/{word}")
 async def lookup_id_of_word(word: str):
 	response = db.search(Query().word == word)
 	if response:
@@ -175,14 +170,14 @@ async def lookup_id_of_word(word: str):
 		raise HTTPException(status_code=404, detail="Item not found	lol")
 
 
-@app.get("/get_uploaders_posts/{uploader}")
+@app.get("/api/get_uploaders_posts/{uploader}")
 async def get_all_of_a_uploaders_posts(uploader: str):
 	response = db.search(Query().uploader == uploader.lower())
 
 	return(response)
 
 
-@app.get("/get_random_word")
+@app.get("/api/get_random_word")
 async def get_a_random_word_and_one_from_the_english_dictionary():
 	return {
 		"word":	choice(db.all())["word"],
