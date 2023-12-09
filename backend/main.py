@@ -14,6 +14,8 @@ from tinydb.operations import increment
 from os import getenv
 from fastapi.staticfiles import StaticFiles
 
+# -------------------------------------------
+
 db = TinyDB("db_data.json")
 app	= FastAPI()
 
@@ -51,7 +53,7 @@ class DirEnum(str, Enum):
 #	print(cookie)
 
 # -------------------------------------------
-
+#Hosts the static frontend on the root path
 app.mount("/", StaticFiles(directory="../static", html=True), name="static")
 
 # -------------------------------------------
