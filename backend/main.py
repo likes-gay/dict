@@ -94,7 +94,7 @@ async def remove_trailing_slash(request: Request, call_next):
 
 @app.get("/api")
 def check_if_api_is_working():
-	return {"status": "yes"}
+	return {"I'm a": "teapot"}
 
 @app.get("/api/num_of_words")
 async def count_of_words():
@@ -107,7 +107,7 @@ async def upload_new_word(newWord: UploadWordFormat):
 		raise HTTPException(status_code=400, detail="Word cannot be empty")
 
 	#Check if word already exists
-	if newWord.word	in [entry["word"] for entry	in db.all()]:
+	if db.search(Query().word == newWord.word):
 		raise HTTPException(status_code=400, detail="Word already exists")
 	
 	if newWord.description == "":
@@ -118,7 +118,7 @@ async def upload_new_word(newWord: UploadWordFormat):
 		"word":	newWord.word,
 		"description": newWord.description,
 		"creationDate":	newWord.creationDate or int(time.time()),
-		"uploader":	newWord.uploader or "Unknown",
+		"uploader":	newWord.uploader.capitalize() or "Unknown",
 		"updoots": 0
 	}
 	
@@ -206,7 +206,7 @@ async def lookup_id_of_word(word: str):
 
 @app.get("/api/get_uploaders_posts/{uploader}")
 async def get_all_of_a_uploaders_posts(uploader: str):
-	response = db.search(Query().uploader == uploader.lower())
+	response = db.search(Query().uploader == uploader.capitalize())
 
 	return(response)
 
