@@ -1,38 +1,38 @@
 module.exports = {
-	"env": {
-		"browser": true,
-		"es2021": true,
-		"node": true
+	env: {
+		browser: true,
+		es2024: true,
+		node: true,
 	},
-	"extends": [
+	extends: [
 		"eslint:recommended",
 		"plugin:@typescript-eslint/recommended",
 		"plugin:react/recommended"
 	],
-	"overrides": [
+	overrides: [
 		{
-			"env": {
-				"node": true
+			env: {
+				node: true
 			},
-			"files": [
+			files: [
 				".eslintrc.{js,cjs}"
 			],
-			"parserOptions": {
-				"sourceType": "script"
+			parserOptions: {
+				sourceType: "script"
 			}
 		}
 	],
-	"parser": "@typescript-eslint/parser",
-	"parserOptions": {
-		"ecmaVersion": "latest",
-		"sourceType": "module"
+	parser: "@typescript-eslint/parser",
+	parserOptions: {
+		ecmaVersion: "latest",
+		sourceType: "module"
 	},
-	"plugins": [
+	plugins: [
 		"@typescript-eslint",
 		"react"
 	],
-	"rules": {
-		"indent": [
+	rules: {
+		indent: [
 			"error",
 			"tab"
 		],
@@ -40,14 +40,22 @@ module.exports = {
 			"error",
 			"unix"
 		],
-		"quotes": [
+		quotes: [
 			"error",
 			"double"
 		],
-		"semi": [
+		semi: [
 			"error",
 			"always"
-		]
+		],
+		"quote-props": [
+			"error",
+			"as-needed"
+		],
+		"@typescript-eslint/no-unused-vars": "warn",
+		"react/react-in-jsx-scope": "off",
+		"react/display-name": "off",
+		"react/no-unescaped-entities": "off"
 	},
-	files: ["src/**/*"]
+	ignorePatterns: ["node_modules/**/*"]
 };

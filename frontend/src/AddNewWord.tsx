@@ -13,16 +13,18 @@ type InputValidateProps = {
 	required?: boolean;
 };
 
-const InputValidate = forwardRef((props: InputValidateProps, ref: ForwardedRef<HTMLInputElement | HTMLTextAreaElement>) => {
+type InputValidateHTMLElements = HTMLInputElement | HTMLTextAreaElement;
+
+const InputValidate = forwardRef((props: InputValidateProps, ref: ForwardedRef<InputValidateHTMLElements>) => {
 	const [isInvalid, setIsInvalid] = useState(false);
 
-	function onChange(e: React.ChangeEvent<HTMLInputElement>) {
-		if(!isInvalid && e.target.value) return;
+	function onChange(e: React.ChangeEvent<InputValidateHTMLElements>) {
+		if(!props.required || !isInvalid && e.target.value) return;
 		setIsInvalid(false);
 	}	
 
-	function onBlur(e: React.FocusEvent<HTMLInputElement, Element>) {
-		if(e.target.value.length) return;
+	function onBlur(e: React.FocusEvent<InputValidateHTMLElements, Element>) {
+		if(!props.required || !isInvalid && e.target.value.length) return;
 		setIsInvalid(true);
 	}
 
@@ -35,8 +37,6 @@ const InputValidate = forwardRef((props: InputValidateProps, ref: ForwardedRef<H
 		required: props.required
 	};
 
-	const refE: ForwardedRef<HTMLInputElement | HTMLTextAreaElement> = any;
-
 	const element = props.type == "textarea" ?
 		<textarea
 			ref={ref as ForwardedRef<HTMLTextAreaElement>}
@@ -46,12 +46,12 @@ const InputValidate = forwardRef((props: InputValidateProps, ref: ForwardedRef<H
 			type={props.type}
 			ref={ref as ForwardedRef<HTMLInputElement>}
 			{...allProps}
-		/>
+		/>;
 
 	return (
 		<>
 			{isInvalid &&
-				<div id={`${props.id}-error`} className="eror-box">
+				<div id={`${props.id}-error`} className="error-box">
 					"{props.label}" is a required field
 				</div>
 			}
@@ -61,7 +61,7 @@ const InputValidate = forwardRef((props: InputValidateProps, ref: ForwardedRef<H
 			</label>
 			{element}
 		</>
-	)
+	);
 });
 
 export default function	AddNewWord(props: AddNewWordProps) {
@@ -69,12 +69,13 @@ export default function	AddNewWord(props: AddNewWordProps) {
 	const descriptionInput = useRef<HTMLTextAreaElement>(null);
 	const dateInput	= useRef<HTMLInputElement>(null);
 	const uploaderInput	= useRef<HTMLInputElement>(null);
+
 	const [newWordId, setNewWordId] = useState<string>("");
 
 	async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();
 
-		const newWord: NewUploadedWord = await fetch("https://api.likes.gay/get_all_words/upload_word", {
+		const newWord: NewUploadedWord = await fetch("/api/upload_word", {
 			headers: {
 				"Content-Type": "application/json"
 			},
@@ -93,7 +94,7 @@ export default function	AddNewWord(props: AddNewWordProps) {
 
 	return (
 		<form onSubmit={onSubmit} aria-labelledby="add-new-word">
-			<h2 id="add-new-word">Add New Word</h2>
+			<h2 id="add-new-word">Add a New Word</h2>
 
 			<InputValidate
 				type="text"
@@ -112,27 +113,30 @@ export default function	AddNewWord(props: AddNewWordProps) {
 			/>
 			
 			<InputValidate
+				type="text"
+				label="Uploader"
+				id="uploader"
+				ref={uploaderInput}
+			/>
+
+			<InputValidate
 				type="date"
 				label="Word creation date"
 				id="date"
 				ref={dateInput}
 			/>
 			
-			<InputValidate
-				type="text"
-				label="Uploader"
-				id="uploader"
-				ref={uploaderInput}
-				required
-			/>
-			
-			<button>Submit</button>
+			<button className="submit-button">Submit</button>
 			
 			{newWordId &&
 				<output htmlFor="word definition date uploader">
-					World uploaded!	<a href={`#${newWordId}`}>Link to new word</a>
+					<p>
+						World uploaded!
+						<br />
+						<a href={`#${newWordId}`}>Link to new word</a>
+					</p>
 				</output>
 			}
 		</form>
-	)
+	);
 }

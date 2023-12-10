@@ -1,8 +1,9 @@
 from enum import Enum
 import time
 
-from fastapi import	FastAPI, HTTPException,	Query
+from fastapi import	FastAPI, HTTPException,	Query, Request
 from fastapi.middleware.cors import	CORSMiddleware
+from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
 
 from random_word import	RandomWords
@@ -17,7 +18,8 @@ from fastapi.staticfiles import StaticFiles
 # -------------------------------------------
 
 db = TinyDB("db_data.json")
-app	= FastAPI()
+cookie_table = db.table('session_cookies')
+app	= FastAPI(redirect_slashes=True)
 
 app.add_middleware(
 	CORSMiddleware,
@@ -49,48 +51,76 @@ class DirEnum(str, Enum):
 # -------------------------------------------
 
 #@app.middleware("http")
-#async def session_cookie(req: Request,	cookie:	Cookie(default=None)):
-#	print(cookie)
+#async def session_cookie(request: Request, call_next):
+#	response = await call_next(request)
+#
+#	if "session" not in request.cookies:
+#		response.set_cookie(key="session", value="cookie_value")
+#		cookie_table.insert({
+#			"cookie_value": {
+#				"creation_date": 0,
+#
+#			}
+#		})
+#	
+#	return response
+
+@app.middleware("http")
+async def remove_trailing_slash(request: Request, call_next):
+    if request.url.path != "/" and request.url.path.endswith("/"):
+        url = str(request.url)
+        url = url.rstrip("/")
+        return RedirectResponse(url, 301)
+    return await call_next(request)
 
 # -------------------------------------------
-#Hosts the static frontend on the root path
-app.mount("/", StaticFiles(directory="../static", html=True), name="static")
+
+#@app.middleware("http")
+#async def session_cookie(request: Request, call_next):
+#	response = await call_next(request)
+#
+#	if "session" not in request.cookies:
+#		response.set_cookie(key="session", value="cookie_value")
+#		cookie_table.insert({
+#			"cookie_value": {
+#				"creation_date": 0,
+#
+#			}
+#		})
+#	
+#	return response
 
 # -------------------------------------------
+
+@app.get("/api")
+def check_if_api_is_working():
+	return {"status": "yes"}
 
 @app.get("/api/num_of_words")
 async def count_of_words():
 	return {"totalWords": len(db)}
 
-@app.post("/api/upload_word", status_code=200)
+@app.post("/api/upload_word", status_code=201)
 async def upload_new_word(newWord: UploadWordFormat):
-	#check if word is empty
+	#Check if word is empty
 	if newWord.word	== "":
 		raise HTTPException(status_code=400, detail="Word cannot be empty")
 
-	#check if word already exists
+	#Check if word already exists
 	if newWord.word	in [entry["word"] for entry	in db.all()]:
 		raise HTTPException(status_code=400, detail="Word already exists")
 	
 	if newWord.description == "":
 		raise HTTPException(status_code=400, detail="Description cannot	be empty")
-
-	if not newWord.uploader:
-		uploader = "Anonymous"
-	else:
-		uploader = newWord.uploader
-	
-	if not newWord.creationDate:
-		newWord.creationDate = int(time.time())
 	
 	record = {
-			"id": len(db),
-			"word":	newWord.word,
-			"description": newWord.description,
-			"creationDate":	newWord.creationDate,
-			"uploader":	uploader.lower(),
-			"updoots": 0
-		}
+		"id": len(db),
+		"word":	newWord.word,
+		"description": newWord.description,
+		"creationDate":	newWord.creationDate or int(time.time()),
+		"uploader":	newWord.uploader or "Unknown",
+		"updoots": 0
+	}
 	
 	db.insert(record)
 
@@ -100,14 +130,16 @@ async def upload_new_word(newWord: UploadWordFormat):
 async def delete(req: DeleteWord):
 	if req.secretKey != getenv("SECRET_KEY"):
 		raise HTTPException(status_code=403, detail="Unauthorised, invalid secret key")
+	
+
 
 @app.post("/api/update_updoot")
 async def update_words_updoot_count(req: UpdateUpdoot):
-	if req.isUpdooted == None:
-		raise HTTPException(status_code=400, detail="isUpdooted	cannot be None")
+	if req.isUpdooted == "":
+		raise HTTPException(status_code=400, detail="isUpdooted	cannot be empty")
 
-	if req.id == None:
-		raise HTTPException(status_code=400, detail="id	cannot be None")
+	if req.id == "":
+		raise HTTPException(status_code=400, detail="id	cannot be empty")
 	
 	if req.isUpdooted == True:
 		db.update(increment("updoots"),	Query().id == req.id)
@@ -185,3 +217,8 @@ async def get_a_random_word_and_one_from_the_english_dictionary():
 		"word":	choice(db.all())["word"],
 		"realRandomWord": RandomWords().get_random_word()
 	}
+
+# -------------------------------------------
+#Hosts the static frontend on the root path.
+#This has to be after API routes, since otherwise they're all overwritten by this
+app.mount("/", StaticFiles(directory="../static", html=True), name="static")

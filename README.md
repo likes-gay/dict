@@ -1,5 +1,23 @@
 # Dict
 
+## How to run
+
+### Production
+
+1. Run `npm run build` in [`frontend`](https://github.com/Zoobdude/dict/tree/main/frontend)
+2. Run `uvicorn main:app` in [`backend`](https://github.com/Zoobdude/dict/tree/main/backend)
+
+### Dev
+
+1. Run `npm run build:dev` in [`frontend`](https://github.com/Zoobdude/dict/tree/main/frontend)
+2. Run `uvicorn main:app --reload` in [`backend`](https://github.com/Zoobdude/dict/tree/main/backend)
+
+## Site
+
+The site is hosted by a Raspberry Pi. The backend reads static files from [`static`](https://github.com/Zoobdude/dict/tree/deploy/static) in the [deploy branch](https://github.com/Zoobdude/dict/tree/deploy).
+
+Everytime there's a commit to main, then it a GitHub Action should automatilly compile the files for static.
+
 ## Shell Scripts
 
 ### service_setup.sh

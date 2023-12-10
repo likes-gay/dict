@@ -1,0 +1,289 @@
+@import url("/Roboto.ttf");
+
+body {
+	margin: 0;
+	font-family: "Roboto", sans-serif;
+	background: #1B262C;
+	color: #3282BA;
+}
+
+#root {
+	width: 50svw;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+@media (width < 600px) {
+#root {
+width: unset;
+		margin: 19px;
+}
+}
+
+.loading {
+	appearance: none;
+	border: none;
+	width: 5em;
+	height: 5em;
+	background: none;
+}
+
+.loading::-moz-progress-bar,
+.loading::-webkit-progress-value {
+	animation: spin 1s linear infinite;
+	background: transparent;
+	background-size: cover;
+	background-image: url("loading-spinner.svg");
+}
+
+ @keyframes spin {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+button {
+	min-width: 22px;
+	min-height: 22px;
+	cursor: pointer;
+	padding: 0 1em;
+	border-color: none;
+}
+
+.loading-text {
+	appearance: none;
+	border: none;
+	width: 1ch;
+	height: 1em;
+	opacity: 0.5;
+}
+
+.loading-text::-moz-progress-bar,
+.loading-text::-webkit-progress-value {
+	background: gray;
+}
+
+.page-intro {
+	text-align: center;
+	padding: 2rem 0 0;
+	margin-bottom: 2.5rem;
+}
+
+h1 {
+	font-size: 3rem;
+	font-weight: bolder;
+	margin: 0;
+}
+
+.page-intro p {
+	font-size: 1.5rem;
+	margin: 0;
+}
+
+.list {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+a:visited {
+	color: #6e00b9;
+}
+
+a:active {
+	color: #EE7214;
+}
+
+.tooltip {
+	background: rgba(0, 0, 0, 0.9);
+	color: white;
+	padding: 10px 5px;
+	display: inline;
+	border-radius: 25px;
+	font-size: 0.8em;
+	position: absolute;
+	z-index: 2;
+}
+
+.error-box {
+	background: red;
+	color: black;
+	padding: 0.75em;
+}
+
+.add-new-word h2 {
+	margin-top: 0;
+}
+
+.add-new-word form {
+	margin-bottom: 1em;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.add-new-word button {
+	margin-top: 1em;
+	display: block;
+}
+
+.amount-words-shown {
+	flex-basis:100%;
+}
+
+.footer address {
+	font-style: normal;
+}
+
+/*---------------------------*/
+
+.dictionary-entry {
+	width: 100%;
+	background: #ecf0f1;
+	border-radius: 19px;
+	overflow: hidden;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 1);
+	margin: 20px auto;
+}
+
+.header {
+	background: #3498db;
+	color: white;
+	text-align: center;
+}
+
+.word {
+	font-size: 24px;
+	font-weight: bold;
+	margin: 0;
+	padding: 19px;
+}
+
+.definition-heading {
+	margin-bottom: 0;
+}
+
+.metadata-section {
+	display: flex;
+	justify-content: space-between;
+	padding: 16px;
+	background: #2980b9;
+	color: white;
+}
+
+.buttons-metadata {
+	display: flex;
+	justify-content: space-between;
+	padding: 16px;
+	background: #2980b9;
+	color: white;
+}
+
+.updoot-button,
+.permalink,
+.speak-button {
+	border: none;
+	background: none;
+	cursor: pointer;
+	color: white;
+	font-size: 16px;
+	margin-right: 16px;
+}
+
+.metadata-wrapper {
+	padding: 16px;
+	background: #2980b9;
+	color: white;
+}
+
+.metadata {
+	text-align: left;
+	display: flex;
+	align-items: center;
+	justify-content: space-around;
+}
+
+.uploader::after {
+	content: "|";
+	content: "|" / "";
+}
+
+.uploader-word {
+	font-weight: bold;
+}
+
+.definition {
+	padding: 0 16px 16px 16px;
+	line-height: 1.6;
+}
+
+.definition-section {
+	padding: 0 16px 16px 16px;
+}
+
+.github-logo {
+	width: 1.5em;
+	height: 1.5em;
+	margin-right: 0.5ch;
+	vertical-align: middle;
+}
+
+
+/*--------------------------*/
+
+
+.input {
+	width: 100%;
+	padding: 8px;
+	margin-bottom: 12px;
+	background: #ecf0f1;
+	border: 2px #001DBB solid;
+	color: black;
+	font-family: inherit;
+	font-size: inherit;
+}
+
+.error-box {
+	color: #721c24;
+	background: #f8d7da;
+	border: 1px solid #f5c6cb;
+	padding: 8px;
+	margin-bottom: 12px;
+}
+
+.required-text {
+	color: #dc3545;
+}
+
+form {
+	max-width: 600px;
+	margin: 0 auto;
+}
+
+label {
+	display: block;
+	margin-bottom: 6px;
+}
+
+.submit-button {
+	background: #007bff;
+	color: white;
+	padding: 10px 15px;
+	border: none;
+	cursor: pointer;
+}
+
+.submit-button:hover, .submit-button:focus {
+	background: #0056b3;
+}
+
+output {
+	margin-top: 20px;
+}
+
+.required-text {
+	color: red;
+}

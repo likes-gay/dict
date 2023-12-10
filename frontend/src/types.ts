@@ -1,5 +1,3 @@
-import { type } from "os";
-
 export type	PostEndPointResponse = {
 	id:	number;
 	dailyAffirmation: string;

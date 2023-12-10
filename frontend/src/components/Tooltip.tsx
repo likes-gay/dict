@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { AriaRole, Children, PropsWithChildren, ReactElement, ReactNode, useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
@@ -17,10 +18,10 @@ export default function Tooltip(props: TooltipProps) {
 	const id = useId();
 
 	const ariaAttribute: Record<AriaRelationshipOps, string> = {
-		"label": "aria-labelledby",
-		"description": "aria-describedby",
-		"details": "aria-details",
-		"none": ""
+		label: "aria-labelledby",
+		description: "aria-describedby",
+		details: "aria-details",
+		none: ""
 	};
 
 	useEffect(() => {
@@ -29,6 +30,7 @@ export default function Tooltip(props: TooltipProps) {
 			setShowTooltip(false);
 		}
 
+		
 		function windowClick(e: MouseEvent) {
 			//console.log("Click contain:", tooltip.current == e.target || tooltip.current?.contains(e.target as any));
 			//if(tooltip.current?.contains(e.target as Node)) return;
@@ -43,15 +45,15 @@ export default function Tooltip(props: TooltipProps) {
 		return () => {
 			document.removeEventListener("keydown", onEsc);
 			document.removeEventListener("click", windowClick);
-		}
+		};
 	}, [showTooltip]);
 
 	function GetToolTipPos() {
 		const scroll = document.documentElement.scrollTop;
 	
-		let targetPos = interest.current!.getBoundingClientRect();
-		let yLoc = targetPos.y + scroll - 50;
-		let xLoc = targetPos.x;
+		const targetPos = interest.current!.getBoundingClientRect();
+		const yLoc = targetPos.y + scroll - 50;
+		const xLoc = targetPos.x;
 
 		return {
 			top: yLoc,

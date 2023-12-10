@@ -1,0 +1,37 @@
+name: Post every 24 hours
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - frontend/**
+permissions:
+  contents: write
+
+jobs:
+  create-post:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: "20"
+
+    - name: Install dependencies
+      run: npm install
+      working-directory: frontend
+
+    - name: Compile Project
+      run: npm run build
+      working-directory: frontend
+
+    - name: Commit and Push Changes
+      run: |
+        git add -A
+        git commit -m "Update static files to latest commit"
+        git push origin deploy

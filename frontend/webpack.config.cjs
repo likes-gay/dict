@@ -1,32 +1,49 @@
-const CopyWebpackPlugin = require("copy-webpack-plugin");
+/* eslint-disable @typescript-eslint/no-var-requires */
+const CopyPlugin = require("copy-webpack-plugin");
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
+const HtmlMinimizerPlugin = require("html-minimizer-webpack-plugin");
 const path = require("path");
 
-module.exports = {
+const config = {
 	entry: "./src/index.tsx",
 	output: {
-		filename: "bundle.js",
-		path: path.resolve(__dirname, "dist")
+		path: path.resolve(__dirname, "../static"),
+		filename: "bundle.js"
 	},
-	mode: "development",
 	module: {
 		rules: [
 			{
-				test: /.tsx?$/,
-				use: "ts-loader",
-				exclude: /node_modules/,
-			},
+				test: /\.tsx?$/,
+				loader: "ts-loader",
+				exclude: /node_modules/
+			}
 		]
 	},
-	resolve: {
-		extensions: [".tsx", ".ts", ".js"],
+	optimization: {
+		minimizer: [
+			new CssMinimizerPlugin(),
+			new HtmlMinimizerPlugin({
+				minimizerOptions: {
+					conservativeCollapse: false
+				}
+			})
+		],
+		minimize: true
 	},
-	/*plugins: [
-		new CopyWebpackPlugin({
+	plugins: [
+		new CopyPlugin({
 			patterns: [
 				{
-					from: "*.html"
+					from: "src/static_original",
 				}
-			]
-		})
-	]*/
+			],
+		}),
+		new CleanWebpackPlugin()
+	],
+	resolve: {
+		extensions: [".tsx", ".ts", ".js"]
+	}
 };
+
+module.exports = config;

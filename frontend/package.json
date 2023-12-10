@@ -1,31 +1,42 @@
 {
-  "name": "dev",
-  "version": "1.0.0",
-  "type": "module",
-  "scripts": {
-    "build": "webpack --watch",
-    "dev": "webpack serve"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
-  },
-  "devDependencies": {
-    "@types/node": "^20.9.2",
-    "@types/react": "^18.2.37",
-    "@types/react-dom": "^18.2.15",
-    "@typescript-eslint/eslint-plugin": "^6.13.2",
-    "@typescript-eslint/parser": "^6.13.2",
-    "copy-webpack-plugin": "^11.0.0",
-    "eslint": "^8.55.0",
-    "eslint-plugin-react": "^7.33.2",
-    "ts-loader": "^9.5.1",
-    "typescript": "^5.2.2",
-    "webpack": "^5.89.0",
-    "webpack-cli": "^5.1.4",
-    "webpack-dev-server": "^4.15.1"
-  }
+	"name": "dict_word_list",
+	"type": "module",
+	"scripts": {
+		"build": "webpack --mode production",
+		"build:dev": "webpack --mode development --watch",
+		"lint": "eslint --fix"
+	},
+	"keywords": [
+		"dictonary",
+		"fun",
+		"words",
+		"dict"
+	],
+	"author": "",
+	"license": "Unlicense",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Zoobdude/dict.git"
+	},
+	"dependencies": {
+		"react": "^18.2.0",
+		"react-dom": "^18.2.0"
+	},
+	"devDependencies": {
+		"@types/node": "^20.9.2",
+		"@types/react": "^18.2.37",
+		"@types/react-dom": "^18.2.15",
+		"@typescript-eslint/eslint-plugin": "^6.13.2",
+		"@typescript-eslint/parser": "^6.13.2",
+		"clean-webpack-plugin": "^4.0.0",
+		"copy-webpack-plugin": "^11.0.0",
+		"css-minimizer-webpack-plugin": "^5.0.1",
+		"eslint": "^8.55.0",
+		"eslint-plugin-react": "^7.33.2",
+		"html-minimizer-webpack-plugin": "^4.4.0",
+		"ts-loader": "^9.5.1",
+		"typescript": "^5.2.2",
+		"webpack": "^5.89.0",
+		"webpack-cli": "^5.1.4"
+	}
 }
