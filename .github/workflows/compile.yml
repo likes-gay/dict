@@ -1,4 +1,4 @@
-name: Post every 24 hours
+name: Compile to deploy branch
 
 on:
   push:
