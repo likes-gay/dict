@@ -1,5 +1,20 @@
 # Dict
 
+## Shell Scripts
+
+### service_setup.sh
+
+Use the 'service_setup.sh' script to setup the service that will runs dict. This will create a service called 'dict' and start it. The service will be started on boot and will restart if it crashes.
+
+### service_disable.sh
+
+Use the 'service_disable.sh' script to disable the service that runs dict. This will stop the service, disable it from starting on boot and delete the service.
+
+## deploy.sh
+
+To quickly update the service, run the 'deploy.sh' script. This will pull the latest changes from the git repo and restart the service while also preserving the database.
+
+
 ## To Do
 
 - [x] Add updoot button
