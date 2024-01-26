@@ -19,7 +19,7 @@ from tinydb.operations import increment, decrement
 
 load_dotenv()
 
-db = TinyDB("db_data.json" if getenv("DOCKER_CONTAINER") else "data/db_data.json")
+db = TinyDB("dict-data/dict_db.json")
 app = FastAPI()
 
 app.add_middleware(

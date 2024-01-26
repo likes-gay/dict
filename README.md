@@ -1,38 +1,40 @@
 # Dict
 
-Link to website: https://dict.likes.gay
+## Site
+See it live: https://dict.likes.gay
+
+This site is hosted in a [docker container](https://hub.docker.com/r/likesgay/dict) on a [Raspberry Pi](https://www.raspberrypi.com/products/raspberry-pi-5/).
+
+## About
+### Frontend
+* Writtern in typescript 
+* Compiled using the first job in the [github action](https://github.com/likes-gay/dict/blob/main/.github/workflows/compile.yml)
+
+### Backend
+* Writtern in Python
+* [FastAPI](https://fastapi.tiangolo.com/) used to run API and serve static files
+* [TinyDB](https://tinydb.readthedocs.io/en/latest/) used to store words
+
+### GitHub Actions
+* Compiles the TypeScript
+* Compiles Docker Image
+* Pushes to [Docker Hub](https://hub.docker.com/r/likesgay/dict)
 
 ## How to run
 
 ### Production
-
-1. Run `npm run build` in [`frontend`](https://github.com/likes-gay/dict/tree/main/frontend)
-2. Run `uvicorn main:app` in [`backend`](https://github.com/likes-gay/dict/tree/main/backend)
+The easiest and most secure way to run this is using our [offcial docker image](https://hub.docker.com/r/likesgay/dict).
+The default port it runs on is 8000. Change the first port to change the host port.
+The volume sets where the database file should be stored, so it persits. This defaults to the directory the command is run in.
+```
+$ docker run --publish 8000:8000 --volume $(pwd)/dict-data:/backend/ -d dict-data likesgay/dict
+```
+The docker container can automatically be updated to the latest image using [Watchtower](https://containrrr.dev/watchtower/)
 
 ### Dev
 
 1. Run `npm run build:dev` in [`frontend`](https://github.com/likes-gay/dict/tree/main/frontend)
 2. Run `uvicorn main:app --reload` in [`backend`](https://github.com/likes-gay/dict/tree/main/backend)
-
-## Site
-
-The site is hosted by a Raspberry Pi. The backend reads static files from [`static`](https://github.com/likes-gay/dict/tree/deploy/static) in the [deploy branch](https://github.com/likes-gay/dict/tree/deploy).
-
-Everytime there's a commit to main, then it a [GitHub Action](https://github.com/likes-gay/dict/blob/main/.github/workflows/compile.yml) should automatilly compile the files for static.
-
-## Shell Scripts
-
-### service_setup.sh
-
-Use the `service_setup.sh` script to setup the service that will runs dict. This will create a service called 'dict' and start it. The service will be started on boot and will restart if it crashes.
-
-### service_disable.sh
-
-Use the `service_disable.sh` script to disable the service that runs dict. This will stop the service, disable it from starting on boot and delete the service.
-
-## deploy.sh
-
-To quickly update the service, run the `deploy.sh` script. This will pull the latest changes from the git repo and restart the service while also preserving the database.
 
 
 ## To Do
