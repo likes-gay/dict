@@ -14,6 +14,7 @@ from random_word import RandomWords
 
 from tinydb import TinyDB, Query
 from tinydb.operations import increment, decrement
+
 # -------------------------------------------
 
 load_dotenv()
