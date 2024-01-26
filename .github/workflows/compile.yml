@@ -31,7 +31,7 @@ jobs:
       working-directory: frontend
     
     - name: Upload static files
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4.3.0
       with:
         name: static
         path: static
@@ -55,7 +55,7 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
 
     - name: Download static files
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v4
       with:
         name: static
         path: static
@@ -68,4 +68,3 @@ jobs:
         platforms: linux/amd64,linux/arm
         push: true
         tags: ${{ secrets.DOCKER_USERNAME }}/dict:latest
-
