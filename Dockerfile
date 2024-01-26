@@ -4,11 +4,11 @@ FROM python:slim
 # Install build dependencies
 RUN apt-get update && apt-get install -y gcc make
 
-# Add the static (frontend) and backend (api) folders to the container
+# Add the static (frontend) and backend (API) folders to the container
 ADD static /static
 ADD backend /backend
 
-# The api will be running from the backend folder
+# The API will be running from the backend folder
 WORKDIR /backend
 
 # db_data.json will be stored in the dict-data folder
