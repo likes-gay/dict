@@ -1,11 +1,11 @@
 import { Word } from "../types";
 
-export function createWordDomId(word: Word) {
-	return `dfn-${word.word.replaceAll(/\s/g, "_")}:${word.id}`;
+export function createWordDomId(props: Word) {
+	return `dfn-${props.word.replaceAll(/\s/g, "_")}:${props.id}`;
 }
 
-export function createDescriptionDomId(word: Word) {
-	return `description-${word.word.replaceAll(/\s/g, "_")}:${word.id}`;
+export function createDescriptionDomId(props: Word) {
+	return `description-${props.word.replaceAll(/\s/g, "_")}:${props.id}`;
 }
 
 export function LinkIcon() {

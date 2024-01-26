@@ -2,8 +2,8 @@
 	"name": "dict_word_list",
 	"type": "module",
 	"scripts": {
-		"build": "webpack --mode production",
-		"build:dev": "webpack --mode development --watch"
+		"build": "NODE_ENV=production webpack",
+		"build:dev": "NODE_ENV=development webpack --watch"
 	},
 	"keywords": [
 		"dictonary",

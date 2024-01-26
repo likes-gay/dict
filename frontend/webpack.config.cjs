@@ -20,7 +20,7 @@ module.exports = {
 			},
 		],
 	},
-	//devtool: "source-map", //Include this since the code is open source
+	mode: process.env.NODE_ENV == "development" ? "development" : "production",
 	optimization: {
 		minimizer: [
 			new CssMinimizerPlugin(),
