@@ -17,7 +17,7 @@ VOLUME /backend/dict-data
 # Install the requirements
 RUN pip install -r requirements.txt
 
-# Expose port 3000 for the application
+# Expose port 8000 for the application
 EXPOSE 8000
 
 # Run the command
