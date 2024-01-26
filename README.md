@@ -1,21 +1,26 @@
 # Dict
 
 ## Site
+
 See it live: https://dict.likes.gay
 
-This site is hosted in a [docker container](https://hub.docker.com/r/likesgay/dict) on a [Raspberry Pi](https://www.raspberrypi.com/products/raspberry-pi-5/).
+This site is hosted in a [Docker container](https://hub.docker.com/r/likesgay/dict) on a [Raspberry Pi](https://www.raspberrypi.com/products/raspberry-pi-5/).
 
 ## About
+
 ### Frontend
+
 * Writtern in typescript 
-* Compiled using the first job in the [github action](https://github.com/likes-gay/dict/blob/main/.github/workflows/compile.yml)
+* Compiled using the first job in the [GitHub Action](https://github.com/likes-gay/dict/blob/main/.github/workflows/compile.yml)
 
 ### Backend
+
 * Writtern in Python
 * [FastAPI](https://fastapi.tiangolo.com/) used to run API and serve static files
 * [TinyDB](https://tinydb.readthedocs.io/en/latest/) used to store words
 
 ### GitHub Actions
+
 * Compiles the TypeScript
 * Compiles Docker Image
 * Pushes to [Docker Hub](https://hub.docker.com/r/likesgay/dict)
@@ -23,19 +28,19 @@ This site is hosted in a [docker container](https://hub.docker.com/r/likesgay/di
 ## How to run
 
 ### Production
-The easiest and most secure way to run this is using our [offcial docker image](https://hub.docker.com/r/likesgay/dict).
+
+The easiest and most secure way to run this is using our [offcial Docker image](https://hub.docker.com/r/likesgay/dict).
 The default port it runs on is 8000. Change the first port to change the host port.
 The volume sets where the database file should be stored, so it persits. This defaults to the directory the command is run in.
+```shell
+docker run --publish 8000:8000 --volume $(pwd)/dict-data:/backend/ -d dict-data likesgay/dict
 ```
-$ docker run --publish 8000:8000 --volume $(pwd)/dict-data:/backend/ -d dict-data likesgay/dict
-```
-The docker container can automatically be updated to the latest image using [Watchtower](https://containrrr.dev/watchtower/)
+The Docker container can automatically be updated to the latest image using [Watchtower](https://containrrr.dev/watchtower/).
 
 ### Dev
 
 1. Run `npm run build:dev` in [`frontend`](https://github.com/likes-gay/dict/tree/main/frontend)
 2. Run `uvicorn main:app --reload` in [`backend`](https://github.com/likes-gay/dict/tree/main/backend)
-
 
 ## To Do
 
