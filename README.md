@@ -39,7 +39,7 @@ To quickly update the service, run the `deploy.sh` script. This will pull the la
 
 - [x] Add updoot button
 - [x] Random word API endpoint
-- [x] Migrate to a database rather than JSON file. Potentially [tiny db](https://tinydb.readthedocs.io/en/latest/)
+- [x] Migrate to a database rather than JSON file. Potentially [TinyDB](https://tinydb.readthedocs.io/en/latest/)
 - [ ] Impliment char limits for each JSON value
 - [ ] Improve security, require API key?
 - [x] Add a way to delete entries
@@ -58,4 +58,4 @@ To quickly update the service, run the `deploy.sh` script. This will pull the la
 - [ ] Add word catergories
 - [ ] Add a way to view entries by word catergory
 - [ ] Add validation on acepted query params more effeciently
-- [ ] Improve frontend Tooltip
+- [ ] Improve frontend tooltip
