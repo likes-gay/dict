@@ -2,9 +2,8 @@
 	"name": "dict_word_list",
 	"type": "module",
 	"scripts": {
-		"build": "webpack --mode production",
-		"build:dev": "webpack --mode development --watch",
-		"lint": "eslint --fix"
+		"build": "NODE_ENV=production webpack",
+		"build:dev": "NODE_ENV=development webpack --watch"
 	},
 	"keywords": [
 		"dictonary",
@@ -16,11 +15,13 @@
 	"license": "Unlicense",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/Zoobdude/dict.git"
+		"url": "https://github.com/likes-gay/dict.git"
 	},
 	"dependencies": {
+		"@popperjs/core": "^2.11.8",
 		"react": "^18.2.0",
-		"react-dom": "^18.2.0"
+		"react-dom": "^18.2.0",
+		"react-popper": "^2.3.0"
 	},
 	"devDependencies": {
 		"@types/node": "^20.9.2",

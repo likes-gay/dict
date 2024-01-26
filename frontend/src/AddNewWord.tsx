@@ -1,142 +1,118 @@
-import { ForwardedRef, HTMLInputTypeAttribute, forwardRef, useRef, useState } from "react";
-import { NewUploadedWord, UploadWord, Word } from "./types";
-import { createWordDomId } from "./hooks/utils";
+import { useState } from "react";
+import { UploadWord, UploadWordResponse, Word } from "./types";
+import { ChevronIcon, createWordDomId } from "./hooks/utils";
 
 type AddNewWordProps = {
-	onSubmit?: (newWord: Word) => void
+	onSubmitFinished?: () => void
 }
 
-type InputValidateProps = {
-	label: string;
-	type: "textarea" | HTMLInputTypeAttribute;
-	id: string;
-	required?: boolean;
-};
-
-type InputValidateHTMLElements = HTMLInputElement | HTMLTextAreaElement;
-
-const InputValidate = forwardRef((props: InputValidateProps, ref: ForwardedRef<InputValidateHTMLElements>) => {
-	const [isInvalid, setIsInvalid] = useState(false);
-
-	function onChange(e: React.ChangeEvent<InputValidateHTMLElements>) {
-		if(!props.required || !isInvalid && e.target.value) return;
-		setIsInvalid(false);
-	}	
-
-	function onBlur(e: React.FocusEvent<InputValidateHTMLElements, Element>) {
-		if(!props.required || !isInvalid && e.target.value.length) return;
-		setIsInvalid(true);
-	}
-
-	const allProps = {
-		id: props.id,
-		className: "input",
-		"aria-errormessage": isInvalid ? `${props.id}-error` : undefined,
-		onBlur,
-		onChange,
-		required: props.required
-	};
-
-	const element = props.type == "textarea" ?
-		<textarea
-			ref={ref as ForwardedRef<HTMLTextAreaElement>}
-			{...allProps}
-		/> :
-		<input
-			type={props.type}
-			ref={ref as ForwardedRef<HTMLInputElement>}
-			{...allProps}
-		/>;
-
-	return (
-		<>
-			{isInvalid &&
-				<div id={`${props.id}-error`} className="error-box">
-					"{props.label}" is a required field
-				</div>
-			}
-			<label htmlFor={props.id}>
-				{props.label}:
-				{props.required && <>{" "}<span className="required-text">(required)</span></>}	
-			</label>
-			{element}
-		</>
-	);
-});
-
 export default function	AddNewWord(props: AddNewWordProps) {
-	const wordInput	= useRef<HTMLInputElement>(null);
-	const descriptionInput = useRef<HTMLTextAreaElement>(null);
-	const dateInput	= useRef<HTMLInputElement>(null);
-	const uploaderInput	= useRef<HTMLInputElement>(null);
-
-	const [newWordId, setNewWordId] = useState<string>("");
+	const [newWordDomId, setNewWordDomId] = useState<string>("");
+	const [errorMsg, setErrorMsg] = useState<string>("");
 
 	async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();
+		props.onSubmitFinished?.();
 
-		const newWord: NewUploadedWord = await fetch("/api/upload_word", {
+		setNewWordDomId("");
+		setErrorMsg("");
+
+		const formData = new FormData(e.currentTarget);
+		
+		const creationDate = formData.get("date") ?
+			new Date(formData.get("date") as string).getTime() :
+			new Date().getTime();
+
+		const res = await fetch("/api/upload_word", {
 			headers: {
-				"Content-Type": "application/json"
+				"Content-Type": "application/json",
 			},
 			body: JSON.stringify({
-				word: wordInput.current!.value,
-				description: descriptionInput.current!.value,
-				creationDate: (dateInput.current!.valueAsDate || new Date()).getTime(),
-				uploader: uploaderInput.current!.value
+				word: formData.get("word"),
+				description: formData.get("definition"),
+				creationDate,
+				uploader: formData.get("uploader"),
+				isRobot: formData.get("robot") == "on",
 			} as UploadWord),
-			method:	"POST"
-		}).then(x => x.json());
+			method:	"POST",
+		});
+		const newWord: UploadWordResponse = await res.json();
 
-		setNewWordId(createWordDomId(newWord));
-		if(props.onSubmit) props.onSubmit(newWord);
+		if("detail" in newWord) {
+			setErrorMsg(newWord.detail);
+			return;
+		}
+
+		setNewWordDomId(createWordDomId(newWord));
 	}
 
 	return (
 		<form onSubmit={onSubmit} aria-labelledby="add-new-word">
-			<h2 id="add-new-word">Add a New Word</h2>
+			<details>
+				<summary>
+					<ChevronIcon />
+					<h2 id="add-new-word">Add a New Word</h2>
+				</summary>
 
-			<InputValidate
-				type="text"
-				label="Word"
-				id="word"
-				ref={wordInput}
-				required
-			/>
+				<div className="field">
+					<label htmlFor="word">
+					Word: <span aria-hidden="true" className="required-text">(required)</span>
+					</label>
+					<input type="text" id="word" name="word" className="input" required />
+				</div>
+	
+				<div className="field">
+					<label htmlFor="definition">
+					Definition: <span aria-hidden="true" className="required-text">(required)</span>
+					</label>
+					<textarea
+						id="definition"
+						name="definition"
+						className="input"
+						required
+					></textarea>
+				</div>
 
-			<InputValidate
-				type="textarea"
-				label="Definition"
-				id="definition"
-				ref={descriptionInput}
-				required
-			/>
-			
-			<InputValidate
-				type="text"
-				label="Uploader"
-				id="uploader"
-				ref={uploaderInput}
-			/>
+				<div className="field">
+					<label htmlFor="uploader">Uploader:</label>
+					<input type="text" id="uploader" name="uploader" className="input" />
+				</div>
+	
+				<div className="field">
+					<label htmlFor="date">Word creation date:</label>
+					<input type="date" id="date" name="date" className="input" />
+				</div>
 
-			<InputValidate
-				type="date"
-				label="Word creation date"
-				id="date"
-				ref={dateInput}
-			/>
-			
-			<button className="submit-button">Submit</button>
-			
-			{newWordId &&
-				<output htmlFor="word definition date uploader">
-					<p>
-						World uploaded!
-						<br />
-						<a href={`#${newWordId}`}>Link to new word</a>
-					</p>
-				</output>
-			}
+				<div className="field-checkbox">
+					<input type="checkbox" id="robot" name="robot" />
+					<label htmlFor="robot">Are you a robot?</label>
+				</div>
+
+				<div className="button-wrapper">
+					<button className="submit-button">Submit</button>
+				</div>
+
+				{
+					errorMsg && (
+						<output htmlFor="word definition date uploader">
+							<p className="error-message">
+								Server error: {errorMsg}
+							</p>
+						</output>
+					)
+				}
+	
+				{newWordDomId && (
+					<output htmlFor="word definition date uploader">
+						<p>
+							World uploaded!
+						</p>
+						<p>
+							<a href={`#${newWordDomId}`}>Link to new word</a>
+						</p>
+					</output>
+				)}
+			</details>
 		</form>
 	);
 }

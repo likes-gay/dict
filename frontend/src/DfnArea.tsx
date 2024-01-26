@@ -1,35 +1,97 @@
-import React, {	useState } from	"react";
-import { Word }	from "./types";
-import Tooltip from	"./components/Tooltip";
-import { createDescriptionDomId, createWordDomId } from "./hooks/utils";
+import { useEffect, useState } from "react";
+import { UpdateUpdoot, UpdootStates, Word }	from "./types";
+import Tooltip from "./components/Tooltip";
+import { AudioIcon, LinkIcon, UpdootIcon, createDescriptionDomId, createWordDomId } from "./hooks/utils";
+import useRelativeTime from "./hooks/useRelativeTime";
 
 type DfnAreaProps =	{
 	word: Word;
 };
 
-export default function	DfnArea({ word }: DfnAreaProps)	{
-	const creationDateAsDate = new Date(word.creationDate);
-	const domId	= createWordDomId(word);
-	const descriptionDomId = createDescriptionDomId(word);
+type UpdootButtonsProps = {
+	word: Word;
+	onUpdootUpdate: (updatedWord: Word) => void
+}
 
-	const [updootPressed, setUpdootPressed]	= useState(false);
-	const [isSpeaking, setIsSpeaking] =	useState(false);
+function UpdootButtons({ word, onUpdootUpdate: updateState }: UpdootButtonsProps) {
+	const [updootState, setUpdootState] = useState<UpdootStates>(localStorage.getItem(`${word.id}-updootState`) as UpdootStates || "none");
 
-	function updootClick() {
-		setUpdootPressed(x => !x);
+	useEffect(() => {
+		if(updootState == "none") {
+			localStorage.removeItem(`${word.id}-updootState`);
+			return;
+		}
+		localStorage.setItem(`${word.id}-updootState`, updootState);
+	}, [updootState]);
+
+	async function handleUpdootClick(state: UpdootStates) {
+		setUpdootState(state);
+
+		const updatedWord: Word = await fetch("/api/update_updoot", {
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				id: word.id,
+				updootState: state,
+				prevUpdootState: updootState,
+			} as UpdateUpdoot),
+			method: "POST",
+		}).then(x => x.json());
+		
+		updateState(updatedWord);
 	}
+
+	return (
+		<div className="updoot-info">
+			<Tooltip toolTipContent={"Updoot"} ariaRelationships="none">
+				<button
+					onClick={() => handleUpdootClick(updootState == "up" ? "none" : "up")}
+					aria-label={`Updoot (${word.updoots} ${word.updoots == 1 ? "updoot" : "updoots"})`}
+					aria-pressed={updootState == "up"}
+					className={"updoot-button"}
+				>
+					<UpdootIcon />
+				</button>
+			</Tooltip>
+			<Tooltip toolTipContent={"Total"}>
+				<div className="total">{word.updoots - word.downdoots}</div>
+			</Tooltip>
+			<Tooltip toolTipContent={"Downdoot"} ariaRelationships="none">
+				<button
+					onClick={() => handleUpdootClick(updootState == "down" ? "none" : "down")}
+					aria-label={`Downdoot (${word.downdoots} ${word.downdoots == 1 ? "downdoot" : "downdoots"})`}
+					aria-pressed={updootState == "down"}
+					className={"downdoot-button"}
+				>
+					<UpdootIcon />
+				</button>
+			</Tooltip>
+		</div>
+	);
+}
+
+export default function	DfnArea({ word }: DfnAreaProps) {
+	const [wordData, setWordData] = useState(word);
+	const [isSpeaking, setIsSpeaking] =	useState(false);
+	
+	const creationDateAsDate = new Date(wordData.creationDate);
+	const domId	= createWordDomId(wordData);
+	const descriptionDomId = createDescriptionDomId(wordData);
+	
+	const relativeTime = useRelativeTime(creationDateAsDate);
 
 	function speakWord() {
 		if(isSpeaking) return;
+		setIsSpeaking(true);
 
 		window.speechSynthesis.cancel();
 
-		const utterance	= new SpeechSynthesisUtterance(word.word);
+		const utterance	= new SpeechSynthesisUtterance(wordData.word);
 		const voices = window.speechSynthesis.getVoices();
 		utterance.voice	= voices[0];
 		utterance.lang = "en-GB";
 
-		utterance.addEventListener("start",	() => setIsSpeaking(true));
 		utterance.addEventListener("end", () => setIsSpeaking(false));
 
 		window.speechSynthesis.speak(utterance);
@@ -37,58 +99,45 @@ export default function	DfnArea({ word }: DfnAreaProps)	{
 
 	return (
 		<article id={domId} className="dictionary-entry">
-			<header className="header">
-				<div className="header-begin">
-					<h2 className="word">
-						<dfn aria-details={descriptionDomId}>{word.word}</dfn>
-					</h2>
-				</div>
+			<header className="header-section">
+				<h2 className="word">
+					<dfn aria-details={descriptionDomId}>{wordData.word}</dfn>
+				</h2>
 
-				<div className="metadata-section buttons-metadata">
-					<Tooltip toolTipContent={"Updoot"} ariaRelationships="none">
-						<button
-							onClick={updootClick}
-							aria-label={`Updoot (${word.updoots} ${word.updoots === 1 ? "updoot" : "updoots"})`}
-							aria-pressed={updootPressed}
-							className="updoot-button"
-						>
-							Arrow icon
-						</button>
-					</Tooltip>
-					<Tooltip toolTipContent={"Permalink"} ariaRelationships="none">
-						<a aria-label="Permalink" className="permalink" href={`#${domId}`}>
-							🔗
+				<div className="interactive-metadata">
+					<UpdootButtons word={wordData} onUpdootUpdate={setWordData} />
+
+					<Tooltip toolTipContent={"Perma link"} ariaRelationships="none">
+						<a aria-label="Perma link" className="permalink" href={`/#${domId}`}>
+							<LinkIcon />
 						</a>
 					</Tooltip>
-					<Tooltip toolTipContent={<span role="status">{isSpeaking ? "Speaking" : "Stopped speaking"}</span>}>
+
+					<Tooltip toolTipContent={isSpeaking ? "Speaking" : "Not speaking"}>
 						<button
 							onClick={speakWord}
 							className="speak-button"
 							aria-label="Speak word"
 							aria-disabled={isSpeaking}
 						>
-							{isSpeaking ? "Speaking" : "Stopped speaking"}
+							<AudioIcon />
 						</button>
 					</Tooltip>
 				</div>
 			</header>
 
 			<div className="definition-section">
-				<h3 className="definition-heading">Definition:</h3>
-				<p className="definition" role="definition" id={descriptionDomId}>
-					{word.description}
-				</p>
+				{wordData.description}
 			</div>
 
-			<footer className="metadata metadata-section">
-				<p className="uploader">
-					Uploaded by: <span className="uploader-word">{word.uploader}</span>
+			<footer className="footer-section">
+				<p>
+					Uploaded by: <span className="uploader-word">{wordData.uploader}</span>
 				</p>
-				<span className="separator">|</span>
-				<p className="date">
-					Date:{" "}
-					<time dateTime={creationDateAsDate.toISOString()}>
-						{new Intl.DateTimeFormat("en-GB", {
+				<p>
+					Creation date:{" "}
+					<Tooltip
+						toolTipContent={new Intl.DateTimeFormat("en-GB", {
 							year: "numeric",
 							month: "long",
 							day: "numeric",
@@ -97,7 +146,11 @@ export default function	DfnArea({ word }: DfnAreaProps)	{
 							second: "numeric",
 							hour12: true,
 						}).format(creationDateAsDate)}
-					</time>
+					>
+						<time className="creation-date" dateTime={creationDateAsDate.toISOString()}>
+							{relativeTime}
+						</time>
+					</Tooltip>
 				</p>
 			</footer>
 		</article>

@@ -1,4 +1,6 @@
-tinydb
 fastapi
-uvicorn[standard]
-Random-Word
+pydantic
+random-word
+tinydb
+uvicorn
+python-dotenv
