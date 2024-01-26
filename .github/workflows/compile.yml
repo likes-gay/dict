@@ -34,11 +34,10 @@ jobs:
 
     - name: Update deploy branch to main
       run: |
+        git checkout deploy
         git fetch
-        git merge origin/deploy main
-#        git checkout deploy
-        
-#        git pull origin main --allow-unrelated-histories
+        git merge main
+        git pull origin deploy
 
     - name: Remove .gitignore
       run: |
