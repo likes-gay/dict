@@ -17,7 +17,7 @@ from fastapi.staticfiles import StaticFiles
 
 # -------------------------------------------
 
-db = TinyDB("db_data.json")
+db = TinyDB("data/dict_db.json")
 cookie_table = db.table('session_cookies')
 app	= FastAPI(redirect_slashes=True)
 
