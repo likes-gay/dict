@@ -33,7 +33,9 @@ jobs:
         git config --global user.name "github-actions[bot]"
 
     - name: Checkout deploy branch
-      run: git checkout deploy
+      run: |
+        git fetch
+        git checkout deploy
 
     - name: Merge main into deploy
       run: git merge main
