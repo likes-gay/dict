@@ -3,8 +3,7 @@
 	"type": "module",
 	"scripts": {
 		"build": "webpack --mode production",
-		"build:dev": "webpack --mode development --watch",
-		"lint": "eslint --fix"
+		"build:dev": "webpack --mode development --watch"
 	},
 	"keywords": [
 		"dictonary",
