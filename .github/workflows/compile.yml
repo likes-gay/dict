@@ -5,7 +5,8 @@ on:
     branches:
       - main
     paths:
-      ftontend/**
+      frontend/src/**
+      backend/**
 
 jobs:
   compile-to-static:
