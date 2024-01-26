@@ -32,28 +32,22 @@ jobs:
         git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git config --global user.name "github-actions[bot]"
 
-    - name: Checkout deploy branch
+    - name: Update deploy branch to main
       run: |
-        git fetch
+        git fetch origin
         git checkout deploy
-
-    - name: Merge main into deploy
-      run: git merge main
+        git merge main
 
     - name: Remove .gitignore
       run: |
         git rm .gitignore
-        git rm -r static
-        git commit -m "Remove .gitignore"
 
     - name: Compile Project
       run: npm run build
       working-directory: frontend
 
-    - name: Commit and Push Changes
+    - name: Commit changes
       run: |
         git add -A
         git commit -m "Update static files to latest commit"
-
-    - name: Push changes to deploy
-      run: git push origin deploy
+        git push origin deploy
