@@ -1,4 +1,4 @@
-name: Compile to deploy branch
+name: Compile and push to Docker Hub
 
 on:
   push:
