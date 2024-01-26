@@ -27,16 +27,15 @@ jobs:
       run: npm install
       working-directory: frontend
 
-    - name: Set up Git user
+    - name: Setup Git user
       run: |
         git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git config --global user.name "github-actions[bot]"
 
     - name: Update deploy branch to main
       run: |
-        git fetch origin
         git checkout deploy
-        git merge main
+        git pull origin main
 
     - name: Remove .gitignore
       run: |
