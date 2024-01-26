@@ -35,7 +35,7 @@ jobs:
     - name: Update deploy branch to main
       run: |
         git fetch
-        git merge deploy main
+        git merge origin/deploy main
 #        git checkout deploy
         
 #        git pull origin main --allow-unrelated-histories
