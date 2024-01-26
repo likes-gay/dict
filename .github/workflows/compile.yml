@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - frontend/src/**,
+      - frontend/src/**
       - backend/**
   workflow_dispatch:
 

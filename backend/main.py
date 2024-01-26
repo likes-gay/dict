@@ -19,8 +19,8 @@ from tinydb.operations import increment, decrement
 
 load_dotenv()
 
-db = TinyDB("data/db_data.json")
-app	= FastAPI()
+db = TinyDB("db_data.json" if getenv("DOCKER_CONTAINER") else "data/db_data.json")
+app = FastAPI()
 
 app.add_middleware(
 	CORSMiddleware,
@@ -159,10 +159,10 @@ async def update_words_updoot_count(req: UpdateUpdoot):
 
 	if not db.contains(Query().id == word_id):
 		raise HTTPException(status_code=404, detail="Word does not exist")
-	
+
 	if req.prevUpdootState == req.updootState:
 		raise HTTPException(status_code=400, detail="Cannot update the same updoot state")
-	
+
 	if req.prevUpdootState != UpdootEnum.NONE:
 		db.update(decrement(req.prevUpdootState.value + "doots"), Query().id == word_id)
 	
@@ -179,7 +179,7 @@ async def get_word_by_ID(wordId: GetWordParam):
 	if response:
 		return response[0]
 	else:
-		raise HTTPException(status_code=404, detail="Item not found	lol")
+		raise HTTPException(status_code=404, detail="Item not found lol")
 
 
 @app.get("/api/get_all_words")
@@ -201,9 +201,6 @@ async def get_all_words(
 		return sorted(db.all(), key=lambda x: x["creationDate"], reverse=IS_REVERSED)
 	elif sortby == SortByEnum.ALPHABETICAL:
 		return sorted(db.all(), key=lambda x: x["word"].lower(), reverse=IS_REVERSED)
-	
-	
-
 
 @app.get("/api/get_range_of_words")
 async def get_range_of_words(offset: int = 0, size: int = 5):
@@ -213,11 +210,11 @@ async def get_range_of_words(offset: int = 0, size: int = 5):
 		raise HTTPException(status_code=400, detail="Size cannot be less than 1")
 
 	if offset < 0:
-		raise HTTPException(status_code=400, detail="Offset	cannot be less than	0")
+		raise HTTPException(status_code=400, detail="Offset cannot be less than 0")
 
 	if offset > len(data):
 		raise HTTPException(
-			status_code=400, detail="Offset	cannot be greater than the length the data"
+			status_code=400, detail="Offset cannot be greater than the length the data"
 		)
 
 	return {"dictWords": data[offset : offset + size], "max": len(db)}
@@ -228,7 +225,7 @@ async def lookup_id_of_word(wordId: GetWordParam):
 	response = db.search(Query().word == wordId)
 	if response:
 		return {"id": response[0]["id"]}
-	raise HTTPException(status_code=404, detail="Item not found	lol")
+	raise HTTPException(status_code=404, detail="Item not found lol")
 
 
 @app.get("/api/get_uploaders_posts")
