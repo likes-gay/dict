@@ -66,5 +66,5 @@ jobs:
         file: ./Dockerfile
         platforms: linux/amd64,linux/arm
         push: true
-        tags: ${{ vars.DOCKER_USERNAME }}/dict:latest${{ github.run_number }}
+        tags: ${{ vars.DOCKER_USERNAME }}/dict:latest
 
