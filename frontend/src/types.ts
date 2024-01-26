@@ -37,4 +37,4 @@ export type UpdateUpdoot = {
 	prevUpdootState: UpdootStates;
 };
 
-export type GetAllWordsSortByOptions = "id" | "date" | "alphabet" | "updoots" | "downdoots" | "totaldoots";
+export type GetAllWordsSortByOptions = "totaldoots" | "updoots" | "downdoots" | "id" | "date" | "alphabet";

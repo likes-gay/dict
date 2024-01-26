@@ -74,12 +74,12 @@ class DirEnum(str, Enum):
 
 
 class SortByEnum(str, Enum):
+	TOTALDOOTS = "totaldoots"
+	UPDOOTS = "updoots"
+	DOWNDOOTS = "downdoots"
 	ID = "id"
 	CREATION_DATE = "date"
 	ALPHABETICAL = "alphabet"
-	UPDOOTS = "updoots"
-	DOWNDOOTS = "downdoots"
-	TOTAL_DOOTS = "totaldoots"
 
 
 # -------------------------------------------
@@ -187,7 +187,7 @@ async def get_all_words(
 ):
 	IS_REVERSED = orderby == DirEnum.ASC
 
-	if sortby == SortByEnum.TOTAL_DOOTS:
+	if sortby == SortByEnum.TOTALDOOTS:
 		return sorted(db.all(), key=lambda x: x["updoots"] - x["downdoots"], reverse=IS_REVERSED)
 	elif sortby == SortByEnum.ID:
 		return sorted(db.all(), key=lambda x: x["id"], reverse=IS_REVERSED)
