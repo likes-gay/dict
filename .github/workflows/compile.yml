@@ -36,7 +36,7 @@ jobs:
         name: static
         path: static
 
-  build-docker:
+  build-docker:010147
     runs-on: ubuntu-latest
     needs: compile-to-static
 
@@ -66,5 +66,5 @@ jobs:
         file: ./Dockerfile
         platforms: linux/amd64,linux/arm
         push: true
-        tags: ${{ vars.DOCKER_USERNAME }}/dict:latest
+        tags: ${{ vars.DOCKER_USERNAME }}/dict:latest${{ github.run_number }}
 
