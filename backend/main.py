@@ -19,6 +19,7 @@ from tinydb.operations import increment, decrement
 load_dotenv()
 
 db = TinyDB("data/db_data.json")
+app	= FastAPI()
 
 app.add_middleware(
 	CORSMiddleware,
