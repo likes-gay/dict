@@ -1,36 +1,38 @@
 # Dict
 
+Link to website: https://dict.likes.gay
+
 ## How to run
 
 ### Production
 
-1. Run `npm run build` in [`frontend`](https://github.com/Zoobdude/dict/tree/main/frontend)
-2. Run `uvicorn main:app` in [`backend`](https://github.com/Zoobdude/dict/tree/main/backend)
+1. Run `npm run build` in [`frontend`](https://github.com/likes-gay/dict/tree/main/frontend)
+2. Run `uvicorn main:app` in [`backend`](https://github.com/likes-gay/dict/tree/main/backend)
 
 ### Dev
 
-1. Run `npm run build:dev` in [`frontend`](https://github.com/Zoobdude/dict/tree/main/frontend)
-2. Run `uvicorn main:app --reload` in [`backend`](https://github.com/Zoobdude/dict/tree/main/backend)
+1. Run `npm run build:dev` in [`frontend`](https://github.com/likes-gay/dict/tree/main/frontend)
+2. Run `uvicorn main:app --reload` in [`backend`](https://github.com/likes-gay/dict/tree/main/backend)
 
 ## Site
 
-The site is hosted by a Raspberry Pi. The backend reads static files from [`static`](https://github.com/Zoobdude/dict/tree/deploy/static) in the [deploy branch](https://github.com/Zoobdude/dict/tree/deploy).
+The site is hosted by a Raspberry Pi. The backend reads static files from [`static`](https://github.com/likes-gay/dict/tree/deploy/static) in the [deploy branch](https://github.com/likes-gay/dict/tree/deploy).
 
-Everytime there's a commit to main, then it a GitHub Action should automatilly compile the files for static.
+Everytime there's a commit to main, then it a [GitHub Action](https://github.com/likes-gay/dict/blob/main/.github/workflows/compile.yml) should automatilly compile the files for static.
 
 ## Shell Scripts
 
 ### service_setup.sh
 
-Use the 'service_setup.sh' script to setup the service that will runs dict. This will create a service called 'dict' and start it. The service will be started on boot and will restart if it crashes.
+Use the `service_setup.sh` script to setup the service that will runs dict. This will create a service called 'dict' and start it. The service will be started on boot and will restart if it crashes.
 
 ### service_disable.sh
 
-Use the 'service_disable.sh' script to disable the service that runs dict. This will stop the service, disable it from starting on boot and delete the service.
+Use the `service_disable.sh` script to disable the service that runs dict. This will stop the service, disable it from starting on boot and delete the service.
 
 ## deploy.sh
 
-To quickly update the service, run the 'deploy.sh' script. This will pull the latest changes from the git repo and restart the service while also preserving the database.
+To quickly update the service, run the `deploy.sh` script. This will pull the latest changes from the git repo and restart the service while also preserving the database.
 
 
 ## To Do
@@ -38,7 +40,7 @@ To quickly update the service, run the 'deploy.sh' script. This will pull the la
 - [x] Add updoot button
 - [x] Random word API endpoint
 - [x] Migrate to a database rather than JSON file. Potentially [tiny db](https://tinydb.readthedocs.io/en/latest/)
-- [ ] Implment char limits for each JSON value
+- [ ] Impliment char limits for each JSON value
 - [ ] Improve security, require API key?
 - [ ] Add a way to delete entries
 - [ ] Add a way to edit entries

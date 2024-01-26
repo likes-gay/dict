@@ -1,4 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="46" height="46" viewBox="0 0 46 46" stroke="white" fill="none" stroke-width="3">
-	<circle cx="23" cy="23" r="18" stroke-opacity="0.5"/>
-	<path d="M41 23c0-10-8.06-18-18-18"></path>
+	<circle cx="23" cy="23" r="18" stroke-opacity="0.5" />
+	<path d="M41 23c0-10-8.06-18-18-18" />
+	<animateTransform
+		attributeName="transform"
+		type="rotate"
+		from="0"
+		to="360"
+		dur="1s"
+		repeatCount="indefinite"
+	/>
 </svg>

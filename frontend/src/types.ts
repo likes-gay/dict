@@ -1,28 +1,16 @@
-export type	PostEndPointResponse = {
-	id:	number;
-	dailyAffirmation: string;
-};
-
 export type	Word =  {
 	id:	number;
 	word: string;
 	description: string;
-	creationDate: number; //Unix timestamp
+	creationDate: number;
 	updoots: number;
+	downdoots: number;
 	uploader: string;
 };
-
-export type	AllWordsEndPoint = {
-	words: Word[];
-};
-
-//----------------
 
 export type NumOfWords = {
 	totalWords: number;
 };
-
-export type GetAllIds = Word[];
 
 export type GetRangeOfWords = {
 	dictWords: Word[];
@@ -34,6 +22,19 @@ export type	UploadWord = {
 	description: string;
 	creationDate: number;
 	uploader: string;
+	isRobot: boolean;
 };
 
-export type NewUploadedWord = Word;
+export type	UploadWordResponse = Word | {
+	detail: string;
+};
+
+export type UpdootStates = "up" | "down" | "none";
+
+export type UpdateUpdoot = {
+	id:	number;
+	updootState: UpdootStates;
+	prevUpdootState: UpdootStates;
+};
+
+export type GetAllWordsSortByOptions = "id" | "date" | "alphabet" | "updoots" | "downdoots" | "totaldoots";

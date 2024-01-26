@@ -15,7 +15,7 @@ cd ..
 echo "----------------------------------------"
 echo "Pulling from github..."
 
-git pull https://github.com/Zoobdude/dict deploy
+git pull https://github.com/likes-gay/dict deploy
 
 echo "----------------------------------------"
 echo "Moving db_data folder back into place..."

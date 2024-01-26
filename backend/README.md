@@ -1,6 +1,18 @@
 # Endpoints
 
+## `.env`
+
+For the `/api/delete_word` endpoint.
+
+```env
+SECRECT_KEY= #Here
+```
+
 ## GET
+
+> [!WARNING]  
+> These are probaly outdated, check [the API docs](https://likes.gay/docs) or [`main.py`](https://github.com/likes-gay/dict/blob/main/backend/main.py) for the updated ones.
+
 `/num_of_words`
 ```typescript
 {
