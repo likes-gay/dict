@@ -1,4 +1,4 @@
-# Used slim to try and keep the image size down (as it's running on a raspberry pi)
+# Used slim to try and keep the image size down (as it's running on a Raspberry Pi)
 FROM python:slim
 
 # Install build dependencies
@@ -11,8 +11,8 @@ ADD backend /backend
 # The api will be running from the backend folder
 WORKDIR /backend
 
-# data.json will be stored in the data folder
-VOLUME /backend/data
+# db_data.json will be stored in the dict-data folder
+VOLUME /backend/dict-data
 
 # Install the requirements
 RUN pip install -r requirements.txt
