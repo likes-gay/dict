@@ -32,8 +32,10 @@ This site is hosted in a [Docker container](https://hub.docker.com/r/likesgay/di
 The easiest and most secure way to run this is using our [offcial Docker image](https://hub.docker.com/r/likesgay/dict).
 The default port it runs on is 8000. Change the first port to change the host port.
 The volume sets where the database file should be stored, so it persits. This defaults to the directory the command is run in.
+The detach argument runs the container in the background.
+The name argument sets the name
 ```shell
-docker run --publish 8000:8000 --volume $(pwd)/dict-data:/backend/ -d dict-data likesgay/dict
+docker run --publish 8000:8000 --volume $(pwd)/dict-data:/backend/dict-data --detach --name Dict likesgay/dict
 ```
 The Docker container can automatically be updated to the latest image using [Watchtower](https://containrrr.dev/watchtower/).
 

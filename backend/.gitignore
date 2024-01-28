@@ -1,4 +1,4 @@
-# Forces people to use our website
+# Forces people to use our website by hiding the database
+dict-data
 __pycache__
 .env
-dict-data

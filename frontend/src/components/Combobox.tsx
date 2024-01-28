@@ -15,7 +15,7 @@ type ComboboxProps = {
 	onUpdate?: (newOption: ComboboxOption) => void;
 };
 
-export default function	Combobox(props: ComboboxProps) {
+export default function Combobox(props: ComboboxProps) {
 	const intialIndex = useMemo(() => (
 		props.options.findIndex((option) => option.urlValue == new URLSearchParams(location.search).get(props.urlKey))
 	), [props.options]);
@@ -25,13 +25,13 @@ export default function	Combobox(props: ComboboxProps) {
 		props.options.toSorted((a, b) => a.content!.toString().length - b.content!.toString().length)[0].toString().length + "ch"
 	), [props.options]);
 	
-	const button = useRef<HTMLButtonElement>(null);
-	const listbox = useRef<HTMLUListElement>(null);
+	const [button, setButton] = useState<HTMLButtonElement | null>(null);
+	const [listbox, setListbox] = useState<HTMLUListElement | null>(null);
 	const focusedOption = useRef<HTMLAnchorElement>(null);
 
 	const listboxId = `${props.id || useId()}-listbox`;
 
-	const style = usePopper(button.current!, listbox.current!, {
+	const popper = usePopper(button, listbox, {
 		placement: "bottom",
 		modifiers: [
 			{
@@ -42,16 +42,6 @@ export default function	Combobox(props: ComboboxProps) {
 			},
 		],
 	});
-
-	useEffect(() => {
-		function onPopState() {
-			console.log("popstate");
-		}
-
-		window.addEventListener("popstate", onPopState);
-
-		return () => window.removeEventListener("popstate", onPopState);
-	}, []);
 
 	useEffect(() => {
 		focusedOption.current?.focus();
@@ -81,7 +71,7 @@ export default function	Combobox(props: ComboboxProps) {
 			if(newI == props.options.length) return 0;
 			return newI;
 		});
-		listbox.current?.showPopover();
+		listbox?.showPopover();
 	}
 
 	function onOptionKeyDown(e: React.KeyboardEvent<HTMLUListElement>) {
@@ -105,7 +95,7 @@ export default function	Combobox(props: ComboboxProps) {
 				onKeyDown={onButtonKeyDown}
 				id={props.id}
 				className="combobox-button"
-				ref={button}
+				ref={setButton}
 				style={{
 					width: comboboxWidth,
 				}}
@@ -121,12 +111,12 @@ export default function	Combobox(props: ComboboxProps) {
 			<ul
 				id={listboxId}
 				style={{
-					...style,
+					...popper.styles,
 					width: comboboxWidth,
 				}}
 				className="listbox"
 				role="listbox"
-				ref={listbox}
+				ref={setListbox}
 				onKeyDown={onOptionKeyDown}
 				//@ts-expect-error The Popover API isn't supported by React or its types yet
 				popover=""
@@ -143,7 +133,7 @@ export default function	Combobox(props: ComboboxProps) {
 								e.preventDefault();
 								setConfirmedOptionIndex(i);
 								history.pushState({}, "", CreateUrl(option.urlValue, i));
-								listbox.current?.hidePopover();
+								listbox?.hidePopover();
 							}}
 							onKeyDown={(e) => {
 								if(e.key != " ") return;
