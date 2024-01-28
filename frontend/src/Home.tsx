@@ -40,7 +40,7 @@ export default function	Home() {
 			<header	className="page-intro">
 				<h1>Dict Word List</h1>
 				<p>
-					Total words: {allWords.length || <progress className="loading-text" />}
+					Total words: {isFirstLoading ? <progress className="loading-text" /> : allWords.length}
 				</p>
 			</header>
 			<section className="add-new-word">

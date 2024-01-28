@@ -19,7 +19,7 @@ from tinydb.operations import increment, decrement
 
 load_dotenv()
 
-db = TinyDB("dict-data/dict_db.json")
+db = TinyDB("dict-data/dict_db.json", create_dirs=True)
 app = FastAPI()
 
 app.add_middleware(
