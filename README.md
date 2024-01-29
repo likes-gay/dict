@@ -35,7 +35,7 @@ The volume sets where the database file should be stored, so it persits. This de
 The detach argument runs the container in the background.
 The name argument sets the name
 ```shell
-docker run --publish 8000:8000 --volume $(pwd)/dict-data:/backend/dict-data --detach --name Dict likesgay/dict
+docker run --publish 8000:8000 --volume $(pwd)/dict-data:/backend/dict-data --detach --restart always --name Dict likesgay/dict
 ```
 The Docker container can automatically be updated to the latest image using [Watchtower](https://containrrr.dev/watchtower/).
 
