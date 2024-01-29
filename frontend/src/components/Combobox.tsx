@@ -32,20 +32,32 @@ export default function Combobox(props: ComboboxProps) {
 	const listboxId = `${props.id || useId()}-listbox`;
 
 	const popper = usePopper(button, listbox, {
-		placement: "bottom",
+		placement: "bottom-start",
 		modifiers: [
 			{
 				name: "flip",
 				options: {
-					fallbackPlacements: ["top"],
+					fallbackPlacements: ["top-start"],
 				},
 			},
 		],
 	});
 
 	useEffect(() => {
+		function onToggle() {
+			popper.update?.();
+		}
+
+		listbox?.addEventListener("toggle", onToggle);
+
+		return () => {
+			listbox?.removeEventListener("toggle", onToggle);
+		};
+	}, [listbox]);
+
+	useEffect(() => {
 		focusedOption.current?.focus();
-	}, [focusedOptionIndex]);
+	}, [focusedOptionIndex, popper]);
 
 	useEffect(() => {
 		props.onUpdate?.(props.options[confirmedOptionIndex]);
@@ -111,7 +123,7 @@ export default function Combobox(props: ComboboxProps) {
 			<ul
 				id={listboxId}
 				style={{
-					...popper.styles,
+					...popper.styles.popper,
 					width: comboboxWidth,
 				}}
 				className="listbox"
