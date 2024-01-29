@@ -16,7 +16,7 @@ export default function	AddNewWord(props: AddNewWordProps) {
 		setNewWordDomId("");
 		setErrorMsg("");
 
-		const formData = new FormData(e.currentTarget);
+		const formData = new FormData(e.target as HTMLFormElement);
 		
 		const creationDate = formData.get("date") ?
 			new Date(formData.get("date") as string).getTime() :
@@ -42,7 +42,7 @@ export default function	AddNewWord(props: AddNewWordProps) {
 			return;
 		}
 
-		e.target.reset();
+		(e.target as HTMLFormElement).reset();
 		props.onSubmitFinished?.();
 		setNewWordDomId(createWordDomId(newWord));
 	}
