@@ -12,7 +12,6 @@ export default function	AddNewWord(props: AddNewWordProps) {
 
 	async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();
-		props.onSubmitFinished?.();
 
 		setNewWordDomId("");
 		setErrorMsg("");
@@ -43,6 +42,8 @@ export default function	AddNewWord(props: AddNewWordProps) {
 			return;
 		}
 
+		e.target.reset();
+		props.onSubmitFinished?.();
 		setNewWordDomId(createWordDomId(newWord));
 	}
 
