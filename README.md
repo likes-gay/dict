@@ -30,11 +30,13 @@ This site is hosted in a [Docker container](https://hub.docker.com/r/likesgay/di
 ### Production
 
 The easiest and most secure way to run this is using our [offcial Docker image](https://hub.docker.com/r/likesgay/dict).
-**Make sure to replace the SECRET_KEY in the command**
-The default port it runs on is 8000. Change the first port to change the host port.
-The volume sets where the database file should be stored, so it persits. This defaults to the directory the command is run in.
-The detach argument runs the container in the background.
-The name argument sets the name
+
+* **Make sure to replace the SECRET_KEY in the command**
+* The default port it runs on is 8000. Change the first port to change the host port.
+* The volume sets where the database file should be stored, so it persits. This defaults to the directory the command is run in.
+* The detach argument runs the container in the background.
+* The name argument sets the name
+
 ```shell
 docker run -e SECRET_KEY="SET_SECRECT_KEY_HERE" --publish 8000:8000 --volume $(pwd)/dict-data:/backend/dict-data --detach --restart always --name Dict likesgay/dict
 ```
