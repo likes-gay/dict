@@ -38,18 +38,15 @@ db.update({"isRobot": False}, ~ Query().isRobot.exists())
 
 # -------------------------------------------
 
-
 class UpdootEnum(str, Enum):
 	UP = "up"
 	DOWN = "down"
 	NONE = "none"
 
-
 class UpdateUpdoot(BaseModel):
 	id: int
 	updootState: UpdootEnum
 	prevUpdootState: UpdootEnum
-
 
 class UploadWordFormat(BaseModel):
 	word: str
@@ -57,7 +54,6 @@ class UploadWordFormat(BaseModel):
 	creationDate: int
 	uploader: str
 	isRobot: bool
-
 
 class DeleteWord(BaseModel):
 	id: int
@@ -73,7 +69,6 @@ class DirEnum(str, Enum):
 	DESC = "desc"
 	ASC = "asc"
 
-
 class SortByEnum(str, Enum):
 	TOTALDOOTS = "totaldoots"
 	UPDOOTS = "updoots"
@@ -82,9 +77,7 @@ class SortByEnum(str, Enum):
 	CREATION_DATE = "date"
 	ALPHABETICAL = "alphabet"
 
-
 # -------------------------------------------
-
 
 # Remove trailing slashes
 @app.middleware("http")
@@ -96,8 +89,7 @@ async def remove_trailing_slash(request: Request, call_next):
 
 # -------------------------------------------
 
-
-@app.get("/api")
+@app.get("/api", status_code=418)
 async def check_if_api_is_working():
 	return {"I'm a": "teapot"}
 
@@ -178,6 +170,7 @@ async def get_word_by_ID(wordId: GetWordParam):
 
 	if response:
 		return response[0]
+
 	else:
 		raise HTTPException(status_code=404, detail="Item not found lol")
 
@@ -190,15 +183,20 @@ async def get_all_words(
 
 	if sortby == SortByEnum.TOTALDOOTS:
 		return sorted(db.all(), key=lambda x: x["updoots"] - x["downdoots"], reverse=IS_REVERSED)
+
 	elif sortby == SortByEnum.ID:
 		return sorted(db.all(), key=lambda x: x["id"], reverse=IS_REVERSED)
+
 	elif sortby == SortByEnum.UPDOOTS:
 		print("UPDOOT")
 		return sorted(db.all(), key=lambda x: x["updoots"], reverse=IS_REVERSED)
+
 	elif sortby == SortByEnum.DOWNDOOTS:
 		return sorted(db.all(), key=lambda x: x["downdoots"], reverse=IS_REVERSED)
+
 	elif sortby == SortByEnum.CREATION_DATE:
 		return sorted(db.all(), key=lambda x: x["creationDate"], reverse=IS_REVERSED)
+
 	elif sortby == SortByEnum.ALPHABETICAL:
 		return sorted(db.all(), key=lambda x: x["word"].lower(), reverse=IS_REVERSED)
 
@@ -225,6 +223,7 @@ async def lookup_id_of_word(wordId: GetWordParam):
 	response = db.search(Query().word == wordId)
 	if response:
 		return {"id": response[0]["id"]}
+
 	raise HTTPException(status_code=404, detail="Item not found lol")
 
 
