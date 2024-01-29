@@ -134,7 +134,7 @@ async def upload_a_new_word(new_word: UploadWordFormat):
 
 @app.delete("/api/delete_word", status_code=204)
 async def delete_a_word(req: DeleteWord):
-	if req.secretKey != getenv("SECRECT_KEY"):
+	if req.secretKey != getenv("SECRET_KEY"):
 		raise HTTPException(status_code=403, detail="Unauthorised, invalid secret key")
 
 	# Check if the word exists
