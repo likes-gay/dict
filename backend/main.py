@@ -20,7 +20,11 @@ from tinydb.operations import increment, decrement
 load_dotenv()
 
 db = TinyDB("dict-data/dict_db.json", create_dirs=True)
-app = FastAPI()
+app = FastAPI(
+	title="Dict Backend",
+	summary="Backend for the Dict project",
+	version="2.0.0",
+)
 
 app.add_middleware(
 	CORSMiddleware,
@@ -37,45 +41,67 @@ db.update({"downdoots": 0}, ~ Query().downdoots.exists())
 db.update({"isRobot": False}, ~ Query().isRobot.exists())
 
 # -------------------------------------------
+# Input models
 
 class UpdootEnum(str, Enum):
-	UP = "up"
-	DOWN = "down"
-	NONE = "none"
+    UP = "up"
+    DOWN = "down"
+    NONE = "none"
 
 class UpdateUpdoot(BaseModel):
-	id: int
-	updootState: UpdootEnum
-	prevUpdootState: UpdootEnum
+    id: int
+    updootState: UpdootEnum
+    prevUpdootState: UpdootEnum
 
 class UploadWordFormat(BaseModel):
-	word: str
-	description: str
-	creationDate: int
-	uploader: str
-	isRobot: bool
+    word: str
+    description: str
+    creationDate: int
+    uploader: str
+    isRobot: bool
 
 class DeleteWord(BaseModel):
-	id: int
-	secretKey: str
+    id: int
+    secretKey: str
 
 class GetWordParam(BaseModel):
-	word_id: int
-
-class Uploader(BaseModel):
-	uploader: str
+    word_id: int
 
 class DirEnum(str, Enum):
-	DESC = "desc"
-	ASC = "asc"
+    DESC = "desc"
+    ASC = "asc"
 
 class SortByEnum(str, Enum):
-	TOTALDOOTS = "totaldoots"
-	UPDOOTS = "updoots"
-	DOWNDOOTS = "downdoots"
-	ID = "id"
-	CREATION_DATE = "date"
-	ALPHABETICAL = "alphabet"
+    TOTALDOOTS = "totaldoots"
+    UPDOOTS = "updoots"
+    DOWNDOOTS = "downdoots"
+    ID = "id"
+    CREATION_DATE = "date"
+    ALPHABETICAL = "alphabet"
+
+# -------------------------------------------
+# Output models
+
+class Count(BaseModel):
+	count: int
+ 
+class Record(BaseModel):
+    id: int
+    word: str
+    description: str
+    creationDate: int
+    uploader: str
+    updoots: int
+    downdoots: int
+    isRobot: bool
+
+class RandomWord(BaseModel):
+	word: Record
+	realRandomWord: str
+
+class RangeOfWords(BaseModel):
+	dictWords: list[Record]
+	max: int
 
 # -------------------------------------------
 
@@ -91,15 +117,15 @@ async def remove_trailing_slash(request: Request, call_next):
 
 @app.get("/api", status_code=418)
 async def check_if_api_is_working():
-	return {"I'm a": "teapot"}
+    pass
 
 
-@app.get("/api/num_of_words")
+@app.get("/api/num_of_words", response_model=Count)
 async def count_of_words():
-	return {"totalWords": len(db)}
+	return {"count" : len(db)}
 
 
-@app.post("/api/upload_word", status_code=201)
+@app.post("/api/upload_word", response_model=Record, status_code=201)
 async def upload_a_new_word(new_word: UploadWordFormat):
 	# Trim string values
 	word = new_word.word.strip().lstrip()
@@ -145,7 +171,7 @@ async def delete_a_word(req: DeleteWord):
 	# Delete word from database
 	db.remove(doc_ids=[word.doc_id])
 
-@app.post("/api/update_updoot")
+@app.post("/api/update_updoot", response_model=Record, status_code=201)
 async def update_words_updoot_count(req: UpdateUpdoot):
 	word_id = req.id
 
@@ -163,19 +189,7 @@ async def update_words_updoot_count(req: UpdateUpdoot):
 
 	return db.get(Query().id == word_id)
 
-
-@app.get("/api/get_word")
-async def get_word_by_ID(wordId: GetWordParam):
-	response = db.search(Query().id == wordId)
-
-	if response:
-		return response[0]
-
-	else:
-		raise HTTPException(status_code=404, detail="Item not found lol")
-
-
-@app.get("/api/get_all_words")
+@app.get("/api/get_all_words", response_model=list[Record])
 async def get_all_words(
 	sortby: SortByEnum = SortByEnum.UPDOOTS, orderby: DirEnum = DirEnum.DESC
 ):
@@ -188,7 +202,6 @@ async def get_all_words(
 		return sorted(db.all(), key=lambda x: x["id"], reverse=IS_REVERSED)
 
 	elif sortby == SortByEnum.UPDOOTS:
-		print("UPDOOT")
 		return sorted(db.all(), key=lambda x: x["updoots"], reverse=IS_REVERSED)
 
 	elif sortby == SortByEnum.DOWNDOOTS:
@@ -200,7 +213,20 @@ async def get_all_words(
 	elif sortby == SortByEnum.ALPHABETICAL:
 		return sorted(db.all(), key=lambda x: x["word"].lower(), reverse=IS_REVERSED)
 
-@app.get("/api/get_range_of_words")
+
+@app.get("/api/get_word/{wordID}", response_model=Record)
+async def get_word_by_ID(wordID: int):
+    print(wordID)
+    response = db.search(Query().id == wordID)
+    
+    if response:
+        return response[0]
+    
+    else:
+        raise HTTPException(status_code=404, detail="Item not found lol")
+
+
+@app.get("/api/get_range_of_words", response_model=RangeOfWords)
 async def get_range_of_words(offset: int = 0, size: int = 5):
 	data = db.all()
 
@@ -218,26 +244,30 @@ async def get_range_of_words(offset: int = 0, size: int = 5):
 	return {"dictWords": data[offset : offset + size], "max": len(db)}
 
 
-@app.get("/api/lookup_id")
-async def lookup_id_of_word(wordId: GetWordParam):
-	response = db.search(Query().word == wordId)
-	if response:
-		return {"id": response[0]["id"]}
+@app.get("/api/lookup_word/{word}", response_model=Record)
+async def lookup_word_by_string(word: str):
+    response = db.search(Query().word == word)
 
-	raise HTTPException(status_code=404, detail="Item not found lol")
-
-
-@app.get("/api/get_uploaders_posts")
-async def get_all_of_a_uploaders_posts(uploader: Uploader):
-	response = db.search(Query().uploader == uploader.capitalize())
-
-	return response
+    if response:
+        return response[0]
+    
+    raise HTTPException(status_code=404, detail="Word not found lol")
 
 
-@app.get("/api/get_random_word")
+@app.get("/api/get_uploaders_posts/{uploader}", response_model=list[Record])
+async def get_all_of_a_uploaders_posts(uploader):
+	return db.search(Query().uploader == uploader.capitalize())
+
+
+@app.get("/api/get_all_uploaders", response_model=list[str])
+async def get_names_of_all_uploaders():
+    return list(set([x["uploader"] for x in db.search(Query().uploader.exists())]))
+
+
+@app.get("/api/get_random_word", response_model=RandomWord)
 async def get_a_random_word_and_one_from_the_english_dictionary():
 	return {
-		"word": choice(db.all())["word"],
+		"word": choice(db.all()),
 		"realRandomWord": RandomWords().get_random_word(),
 	}
 

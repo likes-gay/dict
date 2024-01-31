@@ -38,7 +38,7 @@ The easiest and most secure way to run this is using our [offcial Docker image](
 * The name argument sets the name
 
 ```shell
-docker run -e SECRET_KEY="SET_SECRECT_KEY_HERE" --publish 8000:8000 --volume $(pwd)/dict-data:/backend/dict-data --detach --restart always --name Dict likesgay/dict
+docker run -e SECRET_KEY="SET_SECRET_KEY_HERE" --publish 8000:8000 --volume $(pwd)/dict-data:/backend/dict-data --detach --restart always --name Dict likesgay/dict
 ```
 The Docker container can automatically be updated to the latest image using [Watchtower](https://containrrr.dev/watchtower/).
 
