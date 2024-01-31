@@ -47,6 +47,8 @@ The Docker container can automatically be updated to the latest image using [Wat
 1. Run `npm run build:dev` in [`frontend`](https://github.com/likes-gay/dict/tree/main/frontend)
 2. Run `uvicorn main:app --reload` in [`backend`](https://github.com/likes-gay/dict/tree/main/backend)
 
+We also have a [dev branch](https://github.com/likes-gay/dict/tree/dev).
+
 ## To Do
 
 - [x] Add updoot button
