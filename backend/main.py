@@ -216,7 +216,6 @@ async def get_all_words(
 
 @app.get("/api/get_word/{wordID}", response_model=Record)
 async def get_word_by_ID(wordID: int):
-    print(wordID)
     response = db.search(Query().id == wordID)
     
     if response:
