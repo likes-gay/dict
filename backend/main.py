@@ -171,7 +171,7 @@ async def delete_a_word(req: DeleteWord):
 	# Delete word from database
 	db.remove(doc_ids=[word.doc_id])
 
-@app.post("/api/update_updoot", response_model=Record, status_code=201)
+@app.post("/api/update_updoot", response_model=Record)
 async def update_words_updoot_count(req: UpdateUpdoot):
 	word_id = req.id
 
