@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { UploadWord, UploadWordResponse, Word } from "./types";
+import { UploadWord, UploadWordError, Word } from "./types";
 import { ChevronIcon, createWordDomId } from "./hooks/utils";
 
 type AddNewWordProps = {
@@ -35,16 +35,16 @@ export default function	AddNewWord(props: AddNewWordProps) {
 			} as UploadWord),
 			method:	"POST",
 		});
-		const newWord: UploadWordResponse = await res.json();
+		const newWord: UploadWordError | Word | string = await res.json();
 
-		if("detail" in newWord) {
-			setErrorMsg(newWord.detail);
+		if(!res.ok) {
+			setErrorMsg((newWord as UploadWordError).detail || newWord as string);
 			return;
 		}
 
 		(e.target as HTMLFormElement).reset();
 		props.onSubmitFinished?.();
-		setNewWordDomId(createWordDomId(newWord));
+		setNewWordDomId(createWordDomId(newWord as Word));
 	}
 
 	return (

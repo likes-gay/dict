@@ -12,7 +12,7 @@ from pydantic import BaseModel
 
 from random_word import RandomWords
 
-from tinydb import TinyDB, Query
+from tinydb import TinyDB, where
 from tinydb.operations import increment, decrement
 
 # -------------------------------------------
@@ -33,12 +33,6 @@ app.add_middleware(
 	allow_headers=["Content-Type"],
 	allow_origin_regex=r"^/api.*$", # Only allow CORS on /api
 )
-
-# -------------------------------------------
-
-# Add the new keys into the database. So old data doesn't break everything
-db.update({"downdoots": 0}, ~ Query().downdoots.exists())
-db.update({"isRobot": False}, ~ Query().isRobot.exists())
 
 # -------------------------------------------
 # Input models
@@ -76,7 +70,7 @@ class SortByEnum(str, Enum):
     UPDOOTS = "updoots"
     DOWNDOOTS = "downdoots"
     ID = "id"
-    CREATION_DATE = "date"
+    DATE = "date"
     ALPHABETICAL = "alphabet"
 
 # -------------------------------------------
@@ -134,24 +128,24 @@ async def upload_a_new_word(new_word: UploadWordFormat):
 
 	# Check if word is empty
 	if word == "":
-		raise HTTPException(status_code=400, detail="Word after trimming of white space cannot be empty")
+		raise HTTPException(status_code=400, detail="Word after trimming white space can't be empty")
 
 	# Check if word already exists
-	if db.search(Query().word == word):
+	if db.search(where("word") == word):
 		raise HTTPException(status_code=400, detail="Word already exists")
 
 	if description == "":
 		raise HTTPException(status_code=400, detail="Description cannot be empty")
 
 	record = {
-		"id": len(db),
+		"id": (max(db.all(), key=lambda x: x["id"])["id"] + 1) or 0,
 		"word": word,
 		"description": description,
 		"creationDate": new_word.creationDate or int(time.time()),
 		"uploader": uploader or "Unknown",
 		"updoots": 0,
 		"downdoots": 0,
-		"isRobot": False,
+		"isRobot": new_word.isRobot or False,
 	}
 
 	db.insert(record)
@@ -164,7 +158,7 @@ async def delete_a_word(req: DeleteWord):
 		raise HTTPException(status_code=403, detail="Unauthorised, invalid secret key")
 
 	# Check if the word exists
-	word = db.get(Query().id == req.id)
+	word = db.get(where("id") == req.id)
 	if not word:
 		raise HTTPException(status_code=404, detail="Word does not exist")
 
@@ -175,25 +169,28 @@ async def delete_a_word(req: DeleteWord):
 async def update_words_updoot_count(req: UpdateUpdoot):
 	word_id = req.id
 
-	if not db.contains(Query().id == word_id):
+	if not db.contains(where("id") == word_id):
 		raise HTTPException(status_code=404, detail="Word does not exist")
 
 	if req.prevUpdootState == req.updootState:
 		raise HTTPException(status_code=400, detail="Cannot update the same updoot state")
 
 	if req.prevUpdootState != UpdootEnum.NONE:
-		db.update(decrement(req.prevUpdootState.value + "doots"), Query().id == word_id)
+		db.update(decrement(req.prevUpdootState.value + "doots"), where("id") == word_id)
 	
 	if req.updootState != UpdootEnum.NONE:
-		db.update(increment(req.updootState.value + "doots"), Query().id == word_id)
+		db.update(increment(req.updootState.value + "doots"), where("id") == word_id)
 
-	return db.get(Query().id == word_id)
+	return db.get(where("id") == word_id)
 
 @app.get("/api/get_all_words", response_model=list[Record])
 async def get_all_words(
-	sortby: SortByEnum = SortByEnum.UPDOOTS, orderby: DirEnum = DirEnum.DESC
+	sortby: SortByEnum = SortByEnum.UPDOOTS, orderby: DirEnum = DirEnum.ASC
 ):
 	IS_REVERSED = orderby == DirEnum.ASC
+
+	# By default, Python sorts from lowest to highest
+	# So for asending to work (highest to lowest), it needs to be reversed
 
 	if sortby == SortByEnum.TOTALDOOTS:
 		return sorted(db.all(), key=lambda x: x["updoots"] - x["downdoots"], reverse=IS_REVERSED)
@@ -207,7 +204,7 @@ async def get_all_words(
 	elif sortby == SortByEnum.DOWNDOOTS:
 		return sorted(db.all(), key=lambda x: x["downdoots"], reverse=IS_REVERSED)
 
-	elif sortby == SortByEnum.CREATION_DATE:
+	elif sortby == SortByEnum.DATE:
 		return sorted(db.all(), key=lambda x: x["creationDate"], reverse=IS_REVERSED)
 
 	elif sortby == SortByEnum.ALPHABETICAL:
@@ -216,7 +213,7 @@ async def get_all_words(
 
 @app.get("/api/get_word/{wordID}", response_model=Record)
 async def get_word_by_ID(wordID: int):
-    response = db.search(Query().id == wordID)
+    response = db.search(where("id") == wordID)
     
     if response:
         return response[0]
@@ -245,22 +242,28 @@ async def get_range_of_words(offset: int = 0, size: int = 5):
 
 @app.get("/api/lookup_word/{word}", response_model=Record)
 async def lookup_word_by_string(word: str):
-    response = db.search(Query().word == word)
+	response = db.search(where("word") == word)
 
-    if response:
-        return response[0]
-    
-    raise HTTPException(status_code=404, detail="Word not found lol")
+	if response:
+		return response[0]
+	
+	raise HTTPException(status_code=404, detail="Word not found lol")
 
 
 @app.get("/api/get_uploaders_posts/{uploader}", response_model=list[Record])
 async def get_all_of_a_uploaders_posts(uploader):
-	return db.search(Query().uploader == uploader.capitalize())
+	return db.search(where("uploader") == uploader.capitalize())
 
 
 @app.get("/api/get_all_uploaders", response_model=list[str])
 async def get_names_of_all_uploaders():
-    return list(set([x["uploader"] for x in db.search(Query().uploader.exists())]))
+	arr = list(set(
+		[record["uploader"] for record in db.search(where("uploader") != "Unknown")]
+	))
+
+	arr += [record["uploader"] for record in db.search(where("uploader") == "Unknown")]
+
+	return arr
 
 
 @app.get("/api/get_random_word", response_model=RandomWord)

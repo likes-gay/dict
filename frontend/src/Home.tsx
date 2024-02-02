@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
 import AddNewWord from "./AddNewWord";
 import DfnArea from	"./DfnArea";
-import { Word } from "./types";
+import { GetAllWordsOrderByOptions, GetAllWordsSortByOptions, Word } from "./types";
 import Tooltip from	"./components/Tooltip";
 import Combobox from "./components/Combobox";
 
 export default function	Home() {
 	const [allWords, setAllWords] = useState<Word[]>([]);
-	const [isFirstLoading, setFirstIsLoading] = useState(true);
+	const [isFirstLoading, setIsFirstIsLoading] = useState(true);
 
 	useEffect(() => {
 		(async () => {
 			await GetAllWords();
-			setFirstIsLoading(false);
+			setIsFirstIsLoading(false);
 		})();
 	}, []);
 
@@ -28,11 +28,13 @@ export default function	Home() {
 	async function GetAllWords() {
 		const searchParams = new URLSearchParams(location.search);
 
-		const json: Word[] = await fetch(
-			`/api/get_all_words?sortby=${searchParams.get("sortby") || "id"}&orderby=${searchParams.get("orderby") || "asc"}`,
-		).then(x => x.json());
+		const sortby = searchParams.get("sortby") as GetAllWordsSortByOptions || "id";
+		const orderby = searchParams.get("orderby") as GetAllWordsOrderByOptions || "asc";
 
+		const json: Word[] = await fetch(`/api/get_all_words?sortby=${sortby}&orderby=${orderby}`).then(x => x.json());
+	
 		setAllWords(json);
+		return;
 	}
 
 	return (
@@ -89,11 +91,11 @@ export default function	Home() {
 						urlKey="orderby"
 						options={[
 							{
-								content: "Ascending",
+								content: "Ascending (lowest to highest)",
 								urlValue: "asc",
 							},
 							{
-								content: "Descending",
+								content: "Descending (highest to lowest)",
 								urlValue: "desc",
 							},
 						]}

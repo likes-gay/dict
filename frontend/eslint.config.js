@@ -4,7 +4,7 @@ import reactPlugin from "eslint-plugin-react";
 
 export default [
 	{
-		files: ["*.tsx", "*.ts", "*.jsx", "*.js", "*.cjs"],
+		files: ["**/*.tsx", "**/*.ts", "**/*.jsx", "**/*.js", "**/*.cjs"],
 		ignores: ["node_modules/**/*"],
 		languageOptions: {
 			parser: tsParser,

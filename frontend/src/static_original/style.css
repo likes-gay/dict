@@ -134,19 +134,20 @@ a:active {
 }
 
 .dictionary-entry:target {
-	border: solid 5px blue;
+	border: 4px solid #ff9900;
 }
 
 .header-section {
 	color: white;
 	text-align: center;
 	background: #3498db;
+	box-sizing: content-box;
+	padding: 20px;
 }
 
 .word {
 	font-size: 2.7rem;
 	font-weight: bold;
-	padding: 20px;
 	margin: 0;
 	color: #1d2a57;
 	font-family: Arial;
@@ -261,8 +262,8 @@ a:active {
 .definition-section {
 	margin: 20px;
 	padding: 5px;
-	border-top: solid thin #fec400 4px;
-	border-bottom: solid thin #fec400 4px;
+	border-top: solid thin #ff9900 4px;
+	border-bottom: solid thin #ff9900 4px;
 	white-space: pre;
 }
 
@@ -460,7 +461,7 @@ output {
 
 .filter-area label {
 	margin: 0.5rem 0;
-	display: block;
+	display: inline-block;
 }
 
 .combobox-button {

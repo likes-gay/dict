@@ -100,6 +100,7 @@ export default function	DfnArea({ word }: DfnAreaProps) {
 	return (
 		<article id={domId} className="dictionary-entry">
 			<header className="header-section">
+				<small>Id: {wordData.id}</small>
 				<h2 className="word">
 					<dfn aria-details={descriptionDomId}>{wordData.word}</dfn>
 				</h2>

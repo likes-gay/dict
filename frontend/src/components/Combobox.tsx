@@ -3,6 +3,11 @@ import React, { ReactNode, useEffect, useId, useMemo, useRef, useState } from "r
 import { ChevronIcon } from "../hooks/utils";
 import { usePopper } from "react-popper";
 
+type OptionUpdate = {
+	urlKey: string;
+	urlValue: string;
+};
+
 type ComboboxOption = {
 	content: ReactNode;
 	urlValue: string;
@@ -12,7 +17,7 @@ type ComboboxProps = {
 	urlKey: string;
 	options: ComboboxOption[];
 	id?: string;
-	onUpdate?: (newOption: ComboboxOption) => void;
+	onUpdate?: (urlKey: string, urlValue: string) => void;
 };
 
 export default function Combobox(props: ComboboxProps) {
@@ -21,9 +26,7 @@ export default function Combobox(props: ComboboxProps) {
 	), [props.options]);
 	const [focusedOptionIndex, setFocusedOptionIndex] = useState(intialIndex == -1 ? 0 : intialIndex);
 	const [confirmedOptionIndex, setConfirmedOptionIndex] = useState(intialIndex == -1 ? 0 : intialIndex);
-	const comboboxWidth = useMemo(() => (
-		props.options.toSorted((a, b) => a.content!.toString().length - b.content!.toString().length)[0].toString().length + "ch"
-	), [props.options]);
+	const longestWord = useMemo(() => 15, [props.options]);
 	
 	const [button, setButton] = useState<HTMLButtonElement | null>(null);
 	const [listbox, setListbox] = useState<HTMLUListElement | null>(null);
@@ -60,7 +63,7 @@ export default function Combobox(props: ComboboxProps) {
 	}, [focusedOptionIndex, popper]);
 
 	useEffect(() => {
-		props.onUpdate?.(props.options[confirmedOptionIndex]);
+		props.onUpdate?.(props.urlKey, props.options[confirmedOptionIndex].urlValue);
 	}, [confirmedOptionIndex]);
 
 	function CreateUrl(urlValue: string, index: number) {
@@ -109,7 +112,7 @@ export default function Combobox(props: ComboboxProps) {
 				className="combobox-button"
 				ref={setButton}
 				style={{
-					width: comboboxWidth,
+					width: `${longestWord}ch`,
 				}}
 				//@ts-expect-error The Popover API isn't supported by React or its types yet
 				popovertarget={listboxId}
@@ -124,7 +127,7 @@ export default function Combobox(props: ComboboxProps) {
 				id={listboxId}
 				style={{
 					...popper.styles.popper,
-					width: comboboxWidth,
+					width: `${longestWord}ch`,
 				}}
 				className="listbox"
 				role="listbox"

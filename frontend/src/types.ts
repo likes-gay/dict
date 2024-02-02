@@ -25,7 +25,7 @@ export type	UploadWord = {
 	isRobot: boolean;
 };
 
-export type	UploadWordResponse = Word | {
+export type	UploadWordError = {
 	detail: string;
 };
 
@@ -38,3 +38,5 @@ export type UpdateUpdoot = {
 };
 
 export type GetAllWordsSortByOptions = "totaldoots" | "updoots" | "downdoots" | "id" | "date" | "alphabet";
+
+export type GetAllWordsOrderByOptions = "asc" | "desc";
