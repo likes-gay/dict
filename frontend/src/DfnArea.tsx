@@ -109,7 +109,7 @@ export default function	DfnArea({ word }: DfnAreaProps) {
 					<UpdootButtons word={wordData} onUpdootUpdate={setWordData} />
 
 					<Tooltip toolTipContent={"Perma link"} ariaRelationships="none">
-						<a aria-label="Perma link" className="permalink" href={`/#${domId}`}>
+						<a aria-label={`Perma link for ${wordData.word}`} className="permalink" href={`#${domId}`}>
 							<LinkIcon />
 						</a>
 					</Tooltip>
