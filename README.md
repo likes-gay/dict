@@ -49,27 +49,4 @@ The Docker container can automatically be updated to the latest image using [Wat
 
 We also have a [dev branch](https://github.com/likes-gay/dict/tree/dev).
 
-## To Do
-
-- [x] Add updoot button
-- [x] Random word API endpoint
-- [x] Migrate to a database rather than JSON file. Potentially [TinyDB](https://tinydb.readthedocs.io/en/latest/)
-- [ ] Impliment char limits for each JSON value
-- [ ] Improve security, require API key?
-- [x] Add a way to delete entries
-- [ ] Add a way to edit entries
-- [ ] Add a way to search entries
-- [x] Add a way to sort entries
-- [ ] Add a way to export entries
-- [ ] Add a way to import entries
-- [x] Add a way to view entries by date
-- [x] Filter by updoot count
-- [x] Add a way to filter entries
-- [x] Order by updoot count
-- [x] Downdoot button?
-- [ ] Usage counter
-- [ ] Add a way to view entries by user
-- [ ] Add word catergories
-- [ ] Add a way to view entries by word catergory
-- [ ] Add validation on acepted query params more effeciently
-- [ ] Improve frontend tooltip
+And [`dev_run.sh`](https://github.com/likes-gay/dict/blob/main/dev_run.sh) installs all the depenedancies and runs those commands.
