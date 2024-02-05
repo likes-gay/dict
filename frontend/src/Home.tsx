@@ -28,7 +28,7 @@ export default function	Home() {
 	async function GetAllWords(reloadWords?: boolean) {
 		const searchParams = new URLSearchParams(location.search);
 
-		const sortby = searchParams.get("sortby") as GetAllWordsSortByOptions || "id";
+		const sortby = searchParams.get("sortby") as GetAllWordsSortByOptions || "totaldoots";
 		const orderby = searchParams.get("orderby") as GetAllWordsOrderByOptions || "desc";
 
 		if(reloadWords) {
