@@ -3,11 +3,6 @@ import React, { ReactNode, useEffect, useId, useMemo, useRef, useState } from "r
 import { ChevronIcon } from "../hooks/utils";
 import { usePopper } from "react-popper";
 
-type OptionUpdate = {
-	urlKey: string;
-	urlValue: string;
-};
-
 type ComboboxOption = {
 	content: ReactNode;
 	urlValue: string;
@@ -60,7 +55,7 @@ export default function Combobox(props: ComboboxProps) {
 
 	useEffect(() => {
 		focusedOption.current?.focus();
-	}, [focusedOptionIndex, popper]);
+	}, [focusedOptionIndex]);
 
 	useEffect(() => {
 		props.onUpdate?.(props.urlKey, props.options[confirmedOptionIndex].urlValue);
@@ -116,7 +111,7 @@ export default function Combobox(props: ComboboxProps) {
 				}}
 				//@ts-expect-error The Popover API isn't supported by React or its types yet
 				popovertarget={listboxId}
-				aria-controls="listbox"
+				aria-controls={listboxId}
 				aria-haspopup="listbox"
 				role="combobox"
 			>
@@ -156,7 +151,7 @@ export default function Combobox(props: ComboboxProps) {
 								e.currentTarget.click();
 							}}
 							tabIndex={focusedOptionIndex == i ? undefined : -1}
-							data-test={focusedOptionIndex == i}
+							autoFocus={focusedOptionIndex == i}
 							ref={focusedOptionIndex == i ? focusedOption : undefined}
 							role="option"
 							aria-selected={confirmedOptionIndex == i}

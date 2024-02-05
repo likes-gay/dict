@@ -150,7 +150,7 @@ async def upload_a_new_word(new_word: UploadWordFormat):
 		"uploader": uploader or "Unknown",
 		"updoots": 0,
 		"downdoots": 0,
-		"isRobot": False,
+		"isRobot": new_word.isRobot,
 	}
 
 	# Keep the id same as the doc_id
@@ -200,7 +200,7 @@ async def update_words_updoot_count(req: UpdateUpdoot):
 async def get_all_words(
 	sortby: SortByEnum = SortByEnum.UPDOOTS, orderby: DirEnum = DirEnum.DESC
 ):
-	IS_REVERSED = orderby == DirEnum.ASC
+	IS_REVERSED = orderby == DirEnum.DESC
 
 	if sortby == SortByEnum.TOTALDOOTS:
 		return sorted(db.all(), key=lambda x: x["updoots"] - x["downdoots"], reverse=IS_REVERSED)

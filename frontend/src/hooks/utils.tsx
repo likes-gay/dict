@@ -43,7 +43,7 @@ export function AudioIcon() {
 export function ChevronIcon() {
 	return (
 		<svg className="chevron-icon" width={30} height={30} viewBox="0 0 50 50">
-			<polyline points="10 35 25 15 40 35" stroke="currentColor" fill="none" strokeWidth={4} />
+			<polyline points="10 15 25 35 40 15" stroke="currentColor" fill="none" strokeWidth={4} />
 		</svg>
 	);
 }

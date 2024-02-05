@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { UpdateUpdoot, UpdootStates, Word }	from "./types";
 import Tooltip from "./components/Tooltip";
 import { AudioIcon, LinkIcon, UpdootIcon, createDescriptionDomId, createWordDomId } from "./hooks/utils";
@@ -16,16 +16,14 @@ type UpdootButtonsProps = {
 function UpdootButtons({ word, onUpdootUpdate: updateState }: UpdootButtonsProps) {
 	const [updootState, setUpdootState] = useState<UpdootStates>(localStorage.getItem(`${word.id}-updootState`) as UpdootStates || "none");
 
-	useEffect(() => {
-		if(updootState == "none") {
+	async function handleUpdootClick(state: UpdootStates) {
+		setUpdootState(state);
+
+		if(state == "none") {
 			localStorage.removeItem(`${word.id}-updootState`);
 			return;
 		}
-		localStorage.setItem(`${word.id}-updootState`, updootState);
-	}, [updootState]);
-
-	async function handleUpdootClick(state: UpdootStates) {
-		setUpdootState(state);
+		localStorage.setItem(`${word.id}-updootState`, state);
 
 		const updatedWord: Word = await fetch("/api/update_updoot", {
 			headers: {
@@ -82,8 +80,10 @@ export default function	DfnArea({ word }: DfnAreaProps) {
 	const relativeTime = useRelativeTime(creationDateAsDate);
 
 	function speakWord() {
-		if(isSpeaking) return;
-		setIsSpeaking(true);
+		if(isSpeaking) {
+			window.speechSynthesis.cancel();
+			return;
+		};
 
 		window.speechSynthesis.cancel();
 
@@ -92,6 +92,7 @@ export default function	DfnArea({ word }: DfnAreaProps) {
 		utterance.voice	= voices[0];
 		utterance.lang = "en-GB";
 
+		utterance.addEventListener("start", () => setIsSpeaking(true));
 		utterance.addEventListener("end", () => setIsSpeaking(false));
 
 		window.speechSynthesis.speak(utterance);
@@ -100,7 +101,7 @@ export default function	DfnArea({ word }: DfnAreaProps) {
 	return (
 		<article id={domId} className="dictionary-entry">
 			<header className="header-section">
-				<small>Id: {wordData.id}</small>
+				<small className="word-id">Id: {wordData.id}</small>
 				<h2 className="word">
 					<dfn aria-details={descriptionDomId}>{wordData.word}</dfn>
 				</h2>
@@ -114,11 +115,11 @@ export default function	DfnArea({ word }: DfnAreaProps) {
 						</a>
 					</Tooltip>
 
-					<Tooltip toolTipContent={isSpeaking ? "Speaking" : "Not speaking"}>
+					<Tooltip toolTipContent={isSpeaking ? "Cancel speaking" : "Speak word"} ariaRelationships="none">
 						<button
 							onClick={speakWord}
 							className="speak-button"
-							aria-label="Speak word"
+							aria-label={isSpeaking ? "Cancel speaking" : "Speak word"}
 							aria-disabled={isSpeaking}
 						>
 							<AudioIcon />
@@ -133,7 +134,14 @@ export default function	DfnArea({ word }: DfnAreaProps) {
 
 			<footer className="footer-section">
 				<p>
-					Uploaded by: <span className="uploader-word">{wordData.uploader}</span>
+					Uploaded by:
+					<span className="uploader-word">
+						{wordData.isRobot &&
+							<Tooltip toolTipContent={"This word was uploaded by a robot"}>
+								<span aria-label="Robot" aria-roledescription="emoji" role="img">🤖</span>	
+							</Tooltip>}
+						{wordData.uploader}
+					</span>
 				</p>
 				<p>
 					Creation date:{" "}

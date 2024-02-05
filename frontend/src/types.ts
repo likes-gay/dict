@@ -6,6 +6,7 @@ export type	Word =  {
 	updoots: number;
 	downdoots: number;
 	uploader: string;
+	isRobot: boolean;
 };
 
 export type NumOfWords = {

@@ -43,7 +43,7 @@ export default function	AddNewWord(props: AddNewWordProps) {
 		}
 
 		(e.target as HTMLFormElement).reset();
-		props.onSubmitFinished?.();
+		await props.onSubmitFinished?.();
 		setNewWordDomId(createWordDomId(newWord as Word));
 	}
 
@@ -59,7 +59,7 @@ export default function	AddNewWord(props: AddNewWordProps) {
 					<label htmlFor="word">
 					Word: <span aria-hidden="true" className="required-text">(required)</span>
 					</label>
-					<input type="text" id="word" name="word" className="input" required />
+					<input type="text" id="word" name="word" className="input" required autoComplete="off" />
 				</div>
 	
 				<div className="field">

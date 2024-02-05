@@ -1,3 +1,4 @@
+import js from "@eslint/js";
 import tsParser from "@typescript-eslint/parser";
 import tsPlugin from "@typescript-eslint/eslint-plugin";
 import reactPlugin from "eslint-plugin-react";
@@ -15,9 +16,8 @@ export default [
 			typescript: tsPlugin,
 			react: reactPlugin,
 		},
+		...js.configs.recommended,
 		rules: {
-			//...tsPlugin.rules,
-			//...reactPlugin.rules,
 			indent: [
 				"error",
 				"tab",

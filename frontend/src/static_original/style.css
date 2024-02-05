@@ -141,11 +141,17 @@ a:active {
 	color: white;
 	text-align: center;
 	background: #3498db;
-	box-sizing: content-box;
-	padding: 20px;
+	position: relative;
+}
+
+.word-id {
+	position: absolute;
+	top: 1em;
+	left: 1em;
 }
 
 .word {
+	padding: 20px;
 	font-size: 2.7rem;
 	font-weight: bold;
 	margin: 0;
@@ -194,7 +200,6 @@ a:active {
 .speak-button {
 	background: none;
 	border: none;
-	padding: 0;
 	width: 2rem;
 	height: 2rem;
 	display: flex;
@@ -204,11 +209,6 @@ a:active {
 	font-family: inherit;
 	font-size: inherit;
 	cursor: pointer;
-}
-
-.updoot-button,
-.downdoot-button {
-	padding: 0.5rem;
 }
 
 .updoot-info {
@@ -350,7 +350,6 @@ a:active {
 	padding-top: 1rem;
 	display: flex;
 	justify-content: center;
-	gap: 0.5rem;
 }
 
 .add-new-word output {
@@ -451,20 +450,23 @@ output {
 	fill: #2e2c2c;
 }
 
-.speak-button[aria-disabled=true] {
-	cursor: not-allowed;
-}
-
 .chevron-icon {
 	vertical-align: middle;
 }
 
+.filter-area {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-around;
+}
+
 .filter-area label {
-	margin: 0.5rem 0;
 	display: inline-block;
+	padding: 0.25rem 0;
 }
 
 .combobox-button {
+	grid-area: button;
 	min-width: 22px;
 	min-height: 22px;
 	cursor: pointer;

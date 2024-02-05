@@ -11,7 +11,7 @@ export default function	Home() {
 
 	useEffect(() => {
 		(async () => {
-			await GetAllWords();
+			await GetAllWords(true);
 			setIsFirstIsLoading(false);
 		})();
 	}, []);
@@ -25,16 +25,56 @@ export default function	Home() {
 		location.hash = orginalHash;
 	}, [isFirstLoading]);
 
-	async function GetAllWords() {
+	async function GetAllWords(reloadWords?: boolean) {
 		const searchParams = new URLSearchParams(location.search);
 
 		const sortby = searchParams.get("sortby") as GetAllWordsSortByOptions || "id";
-		const orderby = searchParams.get("orderby") as GetAllWordsOrderByOptions || "asc";
+		const orderby = searchParams.get("orderby") as GetAllWordsOrderByOptions || "desc";
 
-		const json: Word[] = await fetch(`/api/get_all_words?sortby=${sortby}&orderby=${orderby}`).then(x => x.json());
+		if(reloadWords) {
+			const json: Word[] = await fetch(`/api/get_all_words?sortby=${sortby}&orderby=${orderby}`).then(x => x.json());
 	
-		setAllWords(json);
-		return;
+			setAllWords(json);
+			return;
+		}
+		const isDesc = orderby == "desc";
+
+		if(sortby == "totaldoots") {
+			setAllWords((prevWords) =>
+				prevWords.toSorted((a, b) =>
+					isDesc
+						? a.updoots - a.downdoots - (b.updoots - b.downdoots)
+						: b.updoots - b.downdoots - (a.updoots - a.downdoots),
+				),
+			);
+		} else if(sortby == "id") {
+			setAllWords((prevWords) =>
+				prevWords.toSorted((a, b) => (isDesc ? a.id - b.id : b.id - a.id)),
+			);
+		} else if(sortby == "updoots") {
+			setAllWords((prevWords) =>
+				prevWords.toSorted((a, b) => (isDesc ? a.updoots - b.updoots : b.updoots - a.updoots)),
+			);
+		} else if(sortby == "downdoots") {
+			setAllWords((prevWords) =>
+				prevWords.toSorted((a, b) => (isDesc ? a.downdoots - b.downdoots : b.downdoots - a.downdoots)),
+			);
+		} else if(sortby == "date") {
+			setAllWords((prevWords) =>
+				prevWords.toSorted((a, b) =>
+					isDesc ? a.creationDate - b.creationDate : b.creationDate - a.creationDate,
+				),
+			);
+		} else if(sortby == "alphabet") {
+			setAllWords((prevWords) =>
+				prevWords.toSorted((a, b) =>
+					isDesc ? a.word.localeCompare(b.word) : b.word.localeCompare(a.word),
+				),
+			);
+		}
+
+		if(orderby)
+			setAllWords(x => x.toReversed());
 	}
 
 	return (
@@ -47,60 +87,64 @@ export default function	Home() {
 			</header>
 			<section className="add-new-word">
 				<AddNewWord
-					onSubmitFinished={() => GetAllWords()}
+					onSubmitFinished={() => GetAllWords(true)}
 				/>
 			</section>
 			<main>
 				<search className="filter-area">
-					<label htmlFor="sort-by">Sort by:</label>
-					<Combobox
-						id="sort-by"
-						urlKey="sortby"
-						options={[
-							{
-								content:"Total doots",
-								urlValue: "totaldoots",
-							},
-							{
-								content: "Updoots",
-								urlValue: "updoots",
-							},
-							{
-								content: "Downdoots",
-								urlValue: "downdoots",
-							},
-							{
-								content: "Id",
-								urlValue: "id",
-							},
-							{
-								content: "Date",
-								urlValue: "date",
-							},
-							{
-								content: "Alphabet",
-								urlValue: "alphabet",
-							},
-						]}
-						onUpdate={() => GetAllWords()}
-					/>
+					<div>
+						<label htmlFor="sort-by">Sort by:</label>
+						<Combobox
+							id="sort-by"
+							urlKey="sortby"
+							options={[
+								{
+									content:"Total doots",
+									urlValue: "totaldoots",
+								},
+								{
+									content: "Updoots",
+									urlValue: "updoots",
+								},
+								{
+									content: "Downdoots",
+									urlValue: "downdoots",
+								},
+								{
+									content: "Id",
+									urlValue: "id",
+								},
+								{
+									content: "Date",
+									urlValue: "date",
+								},
+								{
+									content: "Alphabet",
+									urlValue: "alphabet",
+								},
+							]}
+							onUpdate={() => GetAllWords()}
+						/>
+					</div>
 
-					<label htmlFor="order-by">Order by:</label>
-					<Combobox
-						id="order-by"
-						urlKey="orderby"
-						options={[
-							{
-								content: "Ascending (lowest to highest)",
-								urlValue: "asc",
-							},
-							{
-								content: "Descending (highest to lowest)",
-								urlValue: "desc",
-							},
-						]}
-						onUpdate={() => GetAllWords()}
-					/>
+					<div>
+						<label htmlFor="order-by">Order by:</label>
+						<Combobox
+							id="order-by"
+							urlKey="orderby"
+							options={[
+								{
+									content: "Descending",
+									urlValue: "desc",
+								},
+								{
+									content: "Ascending",
+									urlValue: "asc",
+								},
+							]}
+							onUpdate={() => GetAllWords()}
+						/>
+					</div>
 				</search>
 				{isFirstLoading && <progress className="loading" />}
 				{allWords.length ?
