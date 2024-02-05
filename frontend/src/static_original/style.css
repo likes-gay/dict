@@ -11,7 +11,7 @@ body {
 	margin: 0;
 	font-family: "Roboto", sans-serif;
 	background: #1b262c;
-	color: #3282ba;
+	color: #79c6ff;
 }
 
 #root {
@@ -50,8 +50,8 @@ body {
 }
 
 .button {
-	min-width: 22px;
-	min-height: 22px;
+	min-width: 44px;
+	min-height: 44px;
 	cursor: pointer;
 	padding: 10px 20px;
 	font-size: inherit;
@@ -173,7 +173,7 @@ a:active {
 	display: flex;
 	justify-content: space-around;
 	align-items: center;
-	background: #2980b9;
+	background: #1e5780;
 	color: white;
 	padding: 18px;
 	text-align: center;
@@ -187,8 +187,8 @@ a:active {
 .interactive-metadata {
 	display: flex;
 	justify-content: left;
-	gap: 0.5rem;
-	background: #2980b9;
+	gap: 0.25rem;
+	background: #1e5780;
 	color: white;
 	border-radius: 0.5rem;
 	padding: 0.5rem;
@@ -200,6 +200,8 @@ a:active {
 .speak-button {
 	background: none;
 	border: none;
+	min-width: 44px;
+	min-height: 44px;
 	width: 2rem;
 	height: 2rem;
 	display: flex;
@@ -235,7 +237,7 @@ a:active {
 }
 
 .metadata-wrapper {
-	background: #2980b9;
+	background: #1e5780;
 	color: white;
 }
 
@@ -250,7 +252,7 @@ a:active {
 	display: block;
 }
 
-.creation-date {
+.footer-section .new-line {
 	display: block;
 }
 
@@ -262,6 +264,7 @@ a:active {
 .definition-section {
 	margin: 20px;
 	padding: 5px;
+	color: #004677;
 	border-top: solid thin #ff9900 4px;
 	border-bottom: solid thin #ff9900 4px;
 	white-space: pre;
@@ -440,10 +443,11 @@ output {
 
 [aria-pressed=true] .arrow-icon {
 	fill: orangered;
+	stroke: orange;
 }
 
 [aria-pressed=false] .arrow-icon {
-	fill: gray;
+	fill: none;
 }
 
 [aria-disabled=true] .audio-icon {
@@ -466,15 +470,14 @@ output {
 }
 
 .combobox-button {
-	grid-area: button;
-	min-width: 22px;
-	min-height: 22px;
+	min-width: 44px;
+	min-height: 44px;
 	cursor: pointer;
 	border-radius: 0.5rem;
 	font-size: inherit;
 	font-family: inherit;
 	color: white;
-	background: #2980b9;
+	background: #1e5780;
 	border: 2px solid #606060;
 	display: flex;
 	align-items: center;

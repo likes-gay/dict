@@ -19,11 +19,10 @@ function UpdootButtons({ word, onUpdootUpdate: updateState }: UpdootButtonsProps
 	async function handleUpdootClick(state: UpdootStates) {
 		setUpdootState(state);
 
-		if(state == "none") {
+		if(state == "none")
 			localStorage.removeItem(`${word.id}-updootState`);
-			return;
-		}
-		localStorage.setItem(`${word.id}-updootState`, state);
+		else
+			localStorage.setItem(`${word.id}-updootState`, state);
 
 		const updatedWord: Word = await fetch("/api/update_updoot", {
 			headers: {
@@ -101,7 +100,6 @@ export default function	DfnArea({ word }: DfnAreaProps) {
 	return (
 		<article id={domId} className="dictionary-entry">
 			<header className="header-section">
-				<small className="word-id">Id: {wordData.id}</small>
 				<h2 className="word">
 					<dfn aria-details={descriptionDomId}>{wordData.word}</dfn>
 				</h2>
@@ -143,8 +141,9 @@ export default function	DfnArea({ word }: DfnAreaProps) {
 						{wordData.uploader}
 					</span>
 				</p>
+				<p>{wordData.id}</p>
 				<p>
-					Creation date:{" "}
+					Creation date:
 					<Tooltip
 						toolTipContent={new Intl.DateTimeFormat("en-GB", {
 							year: "numeric",
@@ -156,7 +155,7 @@ export default function	DfnArea({ word }: DfnAreaProps) {
 							hour12: true,
 						}).format(creationDateAsDate)}
 					>
-						<time className="creation-date" dateTime={creationDateAsDate.toISOString()}>
+						<time className="new-line" dateTime={creationDateAsDate.toISOString()}>
 							{relativeTime}
 						</time>
 					</Tooltip>

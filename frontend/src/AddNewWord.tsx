@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { UploadWord, UploadWordError, Word } from "./types";
 import { ChevronIcon, createWordDomId } from "./hooks/utils";
+import Tooltip from "./components/Tooltip";
 
 type AddNewWordProps = {
 	onSubmitFinished?: () => void
@@ -86,7 +87,12 @@ export default function	AddNewWord(props: AddNewWordProps) {
 
 				<div className="field-checkbox">
 					<input type="checkbox" id="robot" name="robot" />
-					<label htmlFor="robot">Are you a robot?</label>
+					<label htmlFor="robot">
+						Are you a robot?
+						<Tooltip toolTipContent="Robot emoji">
+							<span>🤖</span>
+						</Tooltip>
+					</label>
 				</div>
 
 				<div className="button-wrapper">
