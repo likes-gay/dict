@@ -65,7 +65,7 @@ jobs:
       with:
         context: .
         file: ./Dockerfile
-        platforms: linux/amd64,linux/arm
+        platforms: linux/amd64,linux/arm64v8
         push: true
         tags: ${{ vars.DOCKER_USERNAME }}/dict:latest
 
