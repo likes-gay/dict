@@ -10,14 +10,14 @@ This site is hosted in a [Docker container](https://hub.docker.com/r/likesgay/di
 
 ### Frontend
 
-* Writtern in typescript 
+* Written in TypeScript 
 * Compiled using the first job in the [GitHub Action](https://github.com/likes-gay/dict/blob/main/.github/workflows/compile.yml)
 
 ### Backend
 
-* Writtern in Python
-* [FastAPI](https://fastapi.tiangolo.com/) used to run API and serve static files
-* [TinyDB](https://tinydb.readthedocs.io/en/latest/) used to store words
+* Written in Python
+* [FastAPI](https://fastapi.tiangolo.com/) used to run the API and serve static files
+* [TinyDB](https://tinydb.readthedocs.io/en/latest/) used to store the words
 
 ### GitHub Actions
 
@@ -49,4 +49,4 @@ The Docker container can automatically be updated to the latest image using [Wat
 
 We also have a [dev branch](https://github.com/likes-gay/dict/tree/dev).
 
-And [`dev_run.sh`](https://github.com/likes-gay/dict/blob/main/dev_run.sh) installs all the depenedancies and runs those commands.
+And [`dev_run.sh`](https://github.com/likes-gay/dict/blob/main/dev_run.sh) installs all the dependencies and runs those commands.
