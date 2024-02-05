@@ -82,7 +82,10 @@ export default function	DfnArea({ word }: DfnAreaProps) {
 	function speakWord() {
 		window.speechSynthesis.cancel();
 
-		if(isSpeaking) return;
+		if(isSpeaking) {
+			setIsSpeaking(false);
+			return;
+		}
 
 		const utterance	= new SpeechSynthesisUtterance(wordData.word);
 		const voices = window.speechSynthesis.getVoices();
@@ -116,7 +119,7 @@ export default function	DfnArea({ word }: DfnAreaProps) {
 							onClick={speakWord}
 							className="speak-button"
 							aria-label={isSpeaking ? "Cancel speaking" : "Speak word"}
-							aria-disabled={isSpeaking}
+							aria-pressed={isSpeaking}
 						>
 							<AudioIcon />
 						</button>
