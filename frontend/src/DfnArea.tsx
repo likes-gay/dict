@@ -80,12 +80,9 @@ export default function	DfnArea({ word }: DfnAreaProps) {
 	const relativeTime = useRelativeTime(creationDateAsDate);
 
 	function speakWord() {
-		if(isSpeaking) {
-			window.speechSynthesis.cancel();
-			return;
-		};
-
 		window.speechSynthesis.cancel();
+
+		if(isSpeaking) return;
 
 		const utterance	= new SpeechSynthesisUtterance(wordData.word);
 		const voices = window.speechSynthesis.getVoices();

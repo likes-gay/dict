@@ -7,12 +7,12 @@ import Combobox from "./components/Combobox";
 
 export default function	Home() {
 	const [allWords, setAllWords] = useState<Word[]>([]);
-	const [isFirstLoading, setIsFirstIsLoading] = useState(true);
+	const [isFirstLoading, setIsFirstLoading] = useState(true);
 
 	useEffect(() => {
 		(async () => {
 			await GetAllWords(true);
-			setIsFirstIsLoading(false);
+			setIsFirstLoading(false);
 		})();
 	}, []);
 
