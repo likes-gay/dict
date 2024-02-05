@@ -267,7 +267,7 @@ a:active {
 	color: #004677;
 	border-top: solid thin #ff9900 4px;
 	border-bottom: solid thin #ff9900 4px;
-	white-space: pre;
+	overflow-wrap: break-word;
 }
 
 .github-logo {

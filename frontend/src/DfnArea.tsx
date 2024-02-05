@@ -3,6 +3,7 @@ import { UpdateUpdoot, UpdootStates, Word }	from "./types";
 import Tooltip from "./components/Tooltip";
 import { AudioIcon, LinkIcon, UpdootIcon, createDescriptionDomId, createWordDomId } from "./hooks/utils";
 import useRelativeTime from "./hooks/useRelativeTime";
+import WordDescription from "./WordDescription";
 
 type DfnAreaProps =	{
 	word: Word;
@@ -127,7 +128,9 @@ export default function	DfnArea({ word }: DfnAreaProps) {
 			</header>
 
 			<div className="definition-section">
-				{wordData.description}
+				<WordDescription
+					description={wordData.description}
+				/>
 			</div>
 
 			<footer className="footer-section">
