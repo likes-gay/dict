@@ -22,7 +22,7 @@ export function LinkIcon() {
 
 export function UpdootIcon() {
 	return (
-		<svg className="arrow-icon" width={30} height={30} viewBox="0 0 256 256" stroke="gray" strokeWidth={16}>
+		<svg className="arrow-icon" width={30} height={30} viewBox="0 0 256 256" stroke="#a6a6a6" strokeWidth={16}>
 			<path
 				d="M231.39062,123.06152A8,8,0,0,1,224,128H184v80a16.01833,16.01833,0,0,1-16,16H88a16.01833,16.01833,0,0,1-16-16V128H32a8.00065,8.00065,0,0,1-5.65723-13.65723l96-96a8.003,8.003,0,0,1,11.31446,0l96,96A8.002,8.002,0,0,1,231.39062,123.06152Z"
 			/>
@@ -44,6 +44,19 @@ export function ChevronIcon() {
 	return (
 		<svg className="chevron-icon" width={30} height={30} viewBox="0 0 50 50">
 			<polyline points="10 15 25 35 40 15" stroke="currentColor" fill="none" strokeWidth={4} />
+		</svg>
+	);
+}
+
+export function SettingsIcon() {
+	return (
+		<svg className="settings-icon" width={30} height={30} viewBox="0 0 24 24">
+			<path
+				strokeLinecap="round"
+				strokeLinejoin="round"
+				strokeWidth={2}
+				d="M4 6h16M4 12h16M4 18h16"
+			/>
 		</svg>
 	);
 }

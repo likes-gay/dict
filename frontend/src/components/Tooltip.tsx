@@ -8,6 +8,7 @@ type TooltipProps = {
 	toolTipContent: ReactNode;
 	children: ReactElement;
 	ariaRelationships?: AriaRelationshipOps;
+	removeTabIndex?: boolean;
 };
 
 export default function Tooltip(props: TooltipProps) {
@@ -88,7 +89,7 @@ export default function Tooltip(props: TooltipProps) {
 					props.children,
 					{
 						[ariaAttribute[props.ariaRelationships || "description"]]: showTooltip && props.ariaRelationships != "none" ? id : undefined,
-						tabIndex: ["button", "a"].includes(props.children.type.toString()) ? undefined : 0,
+						tabIndex: ["button", "a"].includes(props.children.type.toString()) || props.removeTabIndex ? undefined : 0,
 						ref: setInterest,
 						onClick,
 						onFocus,

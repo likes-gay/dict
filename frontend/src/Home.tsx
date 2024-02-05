@@ -165,7 +165,7 @@ export default function	Home() {
 			</main>
 			<footer className="footer">
 				<p>
-					<Tooltip toolTipContent={"GitHub"} ariaRelationships="none">
+					<Tooltip toolTipContent={"GitHub"} ariaRelationships="none" removeTabIndex={true}>
 						<img src="/github-logo.svg" className="github-logo" alt="GitHub" />
 					</Tooltip>
 					We are <a href="https://github.com/likes-gay/dict">open source</a>!

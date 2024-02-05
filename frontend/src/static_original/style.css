@@ -450,7 +450,7 @@ output {
 	fill: none;
 }
 
-[aria-disabled=true] .audio-icon {
+[aria-pressed=true] .audio-icon {
 	fill: #2e2c2c;
 }
 
