@@ -15,8 +15,6 @@ from random_word import RandomWords
 from tinydb import TinyDB, Query
 from tinydb.operations import increment, decrement
 
-# -------------------------------------------
-
 load_dotenv()
 
 db = TinyDB("dict-data/dict_db.json", create_dirs=True, separators=(",", ":"))
@@ -35,10 +33,10 @@ app.add_middleware(
 )
 
 # -------------------------------------------
+# Prevent breaking changes to the db
 
-# Add the new keys into the database. So old data doesn't break everything
-db.update({"downdoots": 0}, ~ Query().downdoots.exists())
-db.update({"isRobot": False}, ~ Query().isRobot.exists())
+db.update({"updoots": 0}, Query()['updoots'] < 0)
+db.update({"downdoots": 0}, Query()['downdoots'] < 0)
 
 # -------------------------------------------
 # Input models
@@ -188,12 +186,16 @@ async def update_words_updoot_count(req: UpdateUpdoot):
 	if req.prevUpdootState == req.updootState:
 		raise HTTPException(status_code=400, detail="Cannot update the same updoot state")
 
+	entry = db.get(Query().id == word_id)
 	if req.prevUpdootState != UpdootEnum.NONE:
-		db.update(decrement(req.prevUpdootState.value + "doots"), Query().id == word_id)
+		if entry[req.prevUpdootState.value + "doots"] > 0:
+			db.update(decrement(req.prevUpdootState.value + "doots"), Query().id == word_id)
+		else:
+			raise HTTPException(status_code=400, detail=f"Cannot decrement {req.prevUpdootState}doots below 0")
 	
 	if req.updootState != UpdootEnum.NONE:
 		db.update(increment(req.updootState.value + "doots"), Query().id == word_id)
-
+	
 	return db.get(Query().id == word_id)
 
 @app.get("/api/get_all_words", response_model=list[Record])
