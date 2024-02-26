@@ -441,13 +441,18 @@ output {
 	transform: rotate(180deg);
 }
 
-[aria-pressed=true] .arrow-icon {
-	fill: orangered;
-	stroke: orange;
+.downdoot-button[aria-pressed=true] .arrow-icon {
+    fill: #9393ff;
+    stroke: none;
+}
+
+.updoot-button[aria-pressed=true] .arrow-icon {
+    fill: #ff4500;
+    stroke: none;
 }
 
 [aria-pressed=false] .arrow-icon {
-	fill: none;
+    fill: none;
 }
 
 [aria-pressed=true] .audio-icon {
