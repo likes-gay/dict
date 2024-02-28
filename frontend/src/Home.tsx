@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import AddNewWord from "./AddNewWord";
-import DfnArea from	"./DfnArea";
+import DfnArea from "./DfnArea";
 import { GetAllWordsOrderByOptions, GetAllWordsSortByOptions, Word } from "./types";
-import Tooltip from	"./components/Tooltip";
+import Tooltip from "./components/Tooltip";
 import Combobox from "./components/Combobox";
 
-export default function	Home() {
+export default function Home() {
 	const [allWords, setAllWords] = useState<Word[]>([]);
 	const [isFirstLoading, setIsFirstLoading] = useState(true);
 
