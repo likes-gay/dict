@@ -12,7 +12,7 @@ from pydantic import BaseModel
 
 from random_word import RandomWords
 
-from tinydb import TinyDB, Query
+from tinydb import TinyDB, where
 from tinydb.operations import increment, decrement
 
 load_dotenv()
@@ -35,47 +35,48 @@ app.add_middleware(
 # -------------------------------------------
 # Prevent breaking changes to the db
 
-db.update({"updoots": 0}, Query()['updoots'] < 0)
-db.update({"downdoots": 0}, Query()['downdoots'] < 0)
+# Add the new keys into the database. So old data doesn't break everything
+db.update({"downdoots": 0}, ~ where("downdoots").exists())
+db.update({"isRobot": False}, ~ where("isRobot").exists())
 
 # -------------------------------------------
 # Input models
 
 class UpdootEnum(str, Enum):
-    UP = "up"
-    DOWN = "down"
-    NONE = "none"
+	UP = "up"
+	DOWN = "down"
+	NONE = "none"
 
 class UpdateUpdoot(BaseModel):
-    id: int
-    updootState: UpdootEnum
-    prevUpdootState: UpdootEnum
+	id: int
+	updootState: UpdootEnum
+	prevUpdootState: UpdootEnum
 
 class UploadWordFormat(BaseModel):
-    word: str
-    description: str
-    creationDate: int
-    uploader: str
-    isRobot: bool
+	word: str
+	description: str
+	creationDate: int
+	uploader: str
+	isRobot: bool
 
 class DeleteWord(BaseModel):
-    id: int
-    secretKey: str
+	id: int
+	secretKey: str
 
 class GetWordParam(BaseModel):
-    word_id: int
+	word_id: int
 
 class DirEnum(str, Enum):
-    DESC = "desc"
-    ASC = "asc"
+	DESC = "desc"
+	ASC = "asc"
 
 class SortByEnum(str, Enum):
-    TOTALDOOTS = "totaldoots"
-    UPDOOTS = "updoots"
-    DOWNDOOTS = "downdoots"
-    ID = "id"
-    CREATION_DATE = "date"
-    ALPHABETICAL = "alphabet"
+	TOTALDOOTS = "totaldoots"
+	UPDOOTS = "updoots"
+	DOWNDOOTS = "downdoots"
+	ID = "id"
+	CREATION_DATE = "date"
+	ALPHABETICAL = "alphabet"
 
 # -------------------------------------------
 # Output models
@@ -84,14 +85,14 @@ class Count(BaseModel):
 	count: int
  
 class Record(BaseModel):
-    id: int
-    word: str
-    description: str
-    creationDate: int
-    uploader: str
-    updoots: int
-    downdoots: int
-    isRobot: bool
+	id: int
+	word: str
+	description: str
+	creationDate: int
+	uploader: str
+	updoots: int
+	downdoots: int
+	isRobot: bool
 
 class RandomWord(BaseModel):
 	word: Record
@@ -115,7 +116,7 @@ async def remove_trailing_slash(request: Request, call_next):
 
 @app.get("/api", status_code=418)
 async def check_if_api_is_working():
-    pass
+	pass
 
 
 @app.get("/api/num_of_words", response_model=Count)
@@ -126,16 +127,16 @@ async def count_of_words():
 @app.post("/api/upload_word", response_model=Record, status_code=201)
 async def upload_a_new_word(new_word: UploadWordFormat):
 	# Trim string values
-	word = new_word.word.strip().lstrip()
+	word = new_word.word.strip()
 	description = new_word.description.strip()
-	uploader = new_word.uploader.strip().capitalize()
+	uploader = new_word.uploader.strip()
 
 	# Check if word is empty
 	if word == "":
-		raise HTTPException(status_code=400, detail="Word after trimming of white space cannot be empty")
+		raise HTTPException(status_code=400, detail="Word after trimming of whitespace cannot be empty")
 
 	# Check if word already exists
-	if db.search(Query().word == word):
+	if db.search(where("word") == word):
 		raise HTTPException(status_code=400, detail="Word already exists")
 
 	if description == "":
@@ -169,7 +170,7 @@ async def delete_a_word(req: DeleteWord):
 		raise HTTPException(status_code=403, detail="Unauthorised, invalid secret key")
 
 	# Check if the word exists
-	word = db.get(Query().id == req.id)
+	word = db.get(where("id") == req.id)
 	if not word:
 		raise HTTPException(status_code=404, detail="Word does not exist")
 
@@ -179,28 +180,29 @@ async def delete_a_word(req: DeleteWord):
 @app.post("/api/update_updoot", response_model=Record, status_code=201)
 async def update_words_updoot_count(req: UpdateUpdoot):
 	word_id = req.id
+	prevUpdootState = req.prevUpdootState.value + "doots"
 
-	if not db.contains(Query().id == word_id):
+	if not db.contains(where("id") == word_id):
 		raise HTTPException(status_code=404, detail="Word does not exist")
 
 	if req.prevUpdootState == req.updootState:
 		raise HTTPException(status_code=400, detail="Cannot update the same updoot state")
 
-	entry = db.get(Query().id == word_id)
+	entry = db.get(where("id") == word_id)
 	if req.prevUpdootState != UpdootEnum.NONE:
-		if entry[req.prevUpdootState.value + "doots"] > 0:
-			db.update(decrement(req.prevUpdootState.value + "doots"), Query().id == word_id)
+		if entry[prevUpdootState] > 0:
+			db.update(decrement(prevUpdootState), where("id") == word_id)
 		else:
-			raise HTTPException(status_code=400, detail=f"Cannot decrement {req.prevUpdootState}doots below 0")
-	
+			raise HTTPException(status_code=400, detail=f"Cannot decrement {prevUpdootState} below 0")
+
 	if req.updootState != UpdootEnum.NONE:
-		db.update(increment(req.updootState.value + "doots"), Query().id == word_id)
-	
-	return db.get(Query().id == word_id)
+		db.update(increment(req.updootState.value + "doots"), where("id") == word_id)
+
+	return db.get(where("id") == word_id)
 
 @app.get("/api/get_all_words", response_model=list[Record])
 async def get_all_words(
-	sortby: SortByEnum = SortByEnum.UPDOOTS, orderby: DirEnum = DirEnum.DESC
+	sortby: SortByEnum = SortByEnum.TOTALDOOTS, orderby: DirEnum = DirEnum.DESC
 ):
 	IS_REVERSED = orderby == DirEnum.DESC
 
@@ -225,13 +227,13 @@ async def get_all_words(
 
 @app.get("/api/get_word/{wordID}", response_model=Record)
 async def get_word_by_ID(wordID: int):
-    response = db.search(Query().id == wordID)
-    
-    if response:
-        return response[0]
-    
-    else:
-        raise HTTPException(status_code=404, detail="Item not found lol")
+	response = db.search(where("id") == wordID)
+	
+	if response:
+		return response[0]
+	
+	else:
+		raise HTTPException(status_code=404, detail="Item not found lol")
 
 
 @app.get("/api/get_range_of_words", response_model=RangeOfWords)
@@ -254,22 +256,22 @@ async def get_range_of_words(offset: int = 0, size: int = 5):
 
 @app.get("/api/lookup_word/{word}", response_model=Record)
 async def lookup_word_by_string(word: str):
-    response = db.search(Query().word == word)
+	response = db.search(where("word") == word)
 
-    if response:
-        return response[0]
-    
-    raise HTTPException(status_code=404, detail="Word not found lol")
+	if response:
+		return response[0]
+	
+	raise HTTPException(status_code=404, detail="Word not found lol")
 
 
 @app.get("/api/get_uploaders_posts/{uploader}", response_model=list[Record])
 async def get_all_of_a_uploaders_posts(uploader):
-	return db.search(Query().uploader == uploader.capitalize())
+	return db.search(where("uploader") == uploader.capitalize())
 
 
 @app.get("/api/get_all_uploaders", response_model=list[str])
 async def get_names_of_all_uploaders():
-    return list(set([x["uploader"] for x in db.search(Query().uploader.exists())]))
+	return list(set([x["uploader"] for x in db.search(where("uploader").exists())]))
 
 
 @app.get("/api/get_random_word", response_model=RandomWord)
