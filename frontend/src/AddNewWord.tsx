@@ -7,7 +7,7 @@ type AddNewWordProps = {
 	onSubmitFinished?: () => void
 }
 
-export default function	AddNewWord(props: AddNewWordProps) {
+export default function AddNewWord(props: AddNewWordProps) {
 	const [newWordDomId, setNewWordDomId] = useState<string>("");
 	const [errorMsg, setErrorMsg] = useState<string>("");
 
@@ -34,7 +34,7 @@ export default function	AddNewWord(props: AddNewWordProps) {
 				uploader: formData.get("uploader"),
 				isRobot: formData.get("robot") == "on",
 			} as UploadWord),
-			method:	"POST",
+			method: "POST",
 		});
 		const newWord: UploadWordError | Word | string = await res.json();
 
@@ -62,7 +62,7 @@ export default function	AddNewWord(props: AddNewWordProps) {
 					</label>
 					<input type="text" id="word" name="word" className="input" required autoComplete="off" />
 				</div>
-	
+
 				<div className="field">
 					<label htmlFor="definition">
 					Definition: <span aria-hidden="true" className="required-text">(required)</span>
@@ -79,7 +79,7 @@ export default function	AddNewWord(props: AddNewWordProps) {
 					<label htmlFor="uploader">Uploader:</label>
 					<input type="text" id="uploader" name="uploader" className="input" />
 				</div>
-	
+
 				<div className="field">
 					<label htmlFor="date">Word creation date:</label>
 					<input type="date" id="date" name="date" className="input" />
@@ -108,7 +108,7 @@ export default function	AddNewWord(props: AddNewWordProps) {
 						</output>
 					)
 				}
-	
+
 				{newWordDomId && (
 					<output htmlFor="word definition date uploader">
 						<p>
