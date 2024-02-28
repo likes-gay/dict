@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { UpdateUpdoot, UpdootStates, Word }	from "./types";
+import { UpdateUpdoot, UpdootStates, Word } from "./types";
 import Tooltip from "./components/Tooltip";
 import { AudioIcon, LinkIcon, UpdootIcon, createDescriptionDomId, createWordDomId } from "./hooks/utils";
 import useRelativeTime from "./hooks/useRelativeTime";
 import WordDescription from "./WordDescription";
 
-type DfnAreaProps =	{
+type DfnAreaProps = {
 	word: Word;
 };
 
@@ -69,12 +69,12 @@ function UpdootButtons({ word, onUpdootUpdate: updateState }: UpdootButtonsProps
 	);
 }
 
-export default function	DfnArea({ word }: DfnAreaProps) {
+export default function DfnArea({ word }: DfnAreaProps) {
 	const [wordData, setWordData] = useState(word);
-	const [isSpeaking, setIsSpeaking] =	useState(false);
+	const [isSpeaking, setIsSpeaking] = useState(false);
 	
 	const creationDateAsDate = new Date(wordData.creationDate);
-	const domId	= createWordDomId(wordData);
+	const domId = createWordDomId(wordData);
 	const descriptionDomId = createDescriptionDomId(wordData);
 	
 	const relativeTime = useRelativeTime(creationDateAsDate);
@@ -87,9 +87,9 @@ export default function	DfnArea({ word }: DfnAreaProps) {
 			return;
 		}
 
-		const utterance	= new SpeechSynthesisUtterance(wordData.word);
+		const utterance = new SpeechSynthesisUtterance(wordData.word);
 		const voices = window.speechSynthesis.getVoices();
-		utterance.voice	= voices[0];
+		utterance.voice = voices[0];
 		utterance.lang = "en-GB";
 
 		utterance.addEventListener("start", () => setIsSpeaking(true));
@@ -139,7 +139,7 @@ export default function	DfnArea({ word }: DfnAreaProps) {
 					<span className="uploader-word">
 						{wordData.isRobot &&
 							<Tooltip toolTipContent={"This word was uploaded by a robot"}>
-								<span aria-label="Robot" aria-roledescription="emoji" role="img">🤖</span>	
+								<span aria-label="Robot" aria-roledescription="emoji" role="img">🤖</span>
 							</Tooltip>}
 						{wordData.uploader}
 					</span>
