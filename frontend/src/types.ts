@@ -1,5 +1,5 @@
-export type	Word =  {
-	id:	number;
+export type Word =  {
+	id: number;
 	word: string;
 	description: string;
 	creationDate: number;
@@ -18,7 +18,7 @@ export type GetRangeOfWords = {
 	max: number;
 };
 
-export type	UploadWord = {
+export type UploadWord = {
 	word: string;
 	description: string;
 	creationDate: number;
@@ -26,14 +26,14 @@ export type	UploadWord = {
 	isRobot: boolean;
 };
 
-export type	UploadWordError = {
+export type UploadWordError = {
 	detail: string;
 };
 
 export type UpdootStates = "up" | "down" | "none";
 
 export type UpdateUpdoot = {
-	id:	number;
+	id: number;
 	updootState: UpdootStates;
 	prevUpdootState: UpdootStates;
 };
