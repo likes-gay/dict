@@ -4,10 +4,9 @@ on:
   push:
     branches:
       - main
-    paths:
-      - frontend/src/**
-      - backend/*.py
-      - Dockerfile
+    tags:
+      - 'v*' # Only run workflow on version tags, e.g. v1.0.0, v1.0.1, v1.0.2, etc.'
+    
   workflow_dispatch:
 
 jobs:
