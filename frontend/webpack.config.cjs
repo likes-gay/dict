@@ -3,6 +3,7 @@ const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const HtmlMinimizerPlugin = require("html-minimizer-webpack-plugin");
 const path = require("path");
+const webpack = require('webpack');
 
 module.exports = {
 	entry: "./src/index.tsx",
@@ -42,6 +43,9 @@ module.exports = {
 				},
 			],
 		}),
+		new webpack.DefinePlugin({
+			'process.env.VERSION': JSON.stringify(process.env.VERSION)
+		  }),
 		new CleanWebpackPlugin(),
 	],
 	resolve: {

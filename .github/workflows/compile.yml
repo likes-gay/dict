@@ -58,13 +58,17 @@ jobs:
       with:
         name: static
         path: static
-
+    
+    - name: Get version
+      id: version
+      run: echo "VERSION=$(GITHUB_REF#refs/tags/)" >> $GITHUB_ENV
+    
     - name: Build and push
       uses: docker/build-push-action@v5
       with:
-        context: .
         file: ./Dockerfile
         platforms: linux/amd64,linux/arm64/v8
         push: true
         tags: ${{ vars.DOCKER_USERNAME }}/dict:latest
+        build-args: VERSION=${{ env.VERSION }}
 

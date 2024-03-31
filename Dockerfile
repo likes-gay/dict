@@ -1,6 +1,10 @@
 # Used slim to try and keep the image size down (as it's running on a Raspberry Pi)
 FROM python:slim
 
+#Set an ENV var in the final Docker image with the current version number
+ARG VERSION
+ENV VERSION=$VERSION
+
 # Install build dependencies
 RUN apt-get update && apt-get install -y gcc make
 

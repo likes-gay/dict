@@ -1,10 +1,13 @@
 #!/bin/bash
 
-# This script sets up the environment for running the dev server.
+# This script sets up and runs the environment for both the backend and frontend.
 
 # Install frontend dependencies
 cd frontend
 npm install
+
+# Set the version env 
+export VERSION="DEV"
 
 # Build frontend and get its PID
 npm run build:dev &

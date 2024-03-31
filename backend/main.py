@@ -21,7 +21,7 @@ db = TinyDB("dict-data/dict_db.json", create_dirs=True, separators=(",", ":"))
 app = FastAPI(
 	title="Dict Backend",
 	summary="Backend for the Dict project",
-	version="2.0.2",
+	version=getenv("VERSION"),
 )
 
 app.add_middleware(
