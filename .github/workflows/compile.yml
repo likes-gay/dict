@@ -69,6 +69,8 @@ jobs:
         file: ./Dockerfile
         platforms: linux/amd64,linux/arm64/v8
         push: true
-        tags: ${{ vars.DOCKER_USERNAME }}/dict:latest
+        tags: |
+          ${{ vars.DOCKER_USERNAME }}/dict:latest
+          ${{ vars.DOCKER_USERNAME }}/dict:${{ env.VERSION }}
         build-args: VERSION=${{ env.VERSION }}
 
