@@ -178,6 +178,10 @@ export default function	Home() {
 						Website created by <a href="https://github.com/YummyBacon5" rel="author">YummyBacon5</a> and <a href="https://github.com/Zoobdude" rel="author">Zoobdude</a>.
 					</p>
 				</address>
+				<p style={{
+					fontSize: "0.8em",
+					color: "#88811",
+				}}>Version: {process.env.VERSION}</p>
 			</footer>
 		</>
 	);
