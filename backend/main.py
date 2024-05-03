@@ -2,6 +2,7 @@ from os import getenv
 from random import choice
 from enum import Enum
 import time
+from typing import List, Optional
 from dotenv import load_dotenv
 
 from fastapi import FastAPI, HTTPException, Request
@@ -21,13 +22,13 @@ db = TinyDB("dict-data/dict_db.json", create_dirs=True, separators=(",", ":"))
 app = FastAPI(
 	title="Dict Backend",
 	summary="Backend for the Dict project",
-	version=getenv("VERSION"),
+	version=getenv("VERSION") or "DEV",
 )
 
 app.add_middleware(
 	CORSMiddleware,
 	allow_origins=["*"],
-	allow_methods=["GET", "POST", "DELETE"],
+	allow_methods=["GET", "POST", "PATCH", "DELETE"],
 	allow_headers=["Content-Type"],
 	allow_origin_regex=r"^/api.*$", # Only allow CORS on /api
 )
@@ -77,6 +78,17 @@ class SortByEnum(str, Enum):
 	ID = "id"
 	CREATION_DATE = "date"
 	ALPHABETICAL = "alphabet"
+
+class WordEdit(BaseModel):
+	id: int
+	word: Optional[str]
+	description: Optional[str]
+	creationDate: Optional[int]
+	uploader: Optional[str]
+	updoots: Optional[int]
+	downdoots: Optional[int]
+	isRobot: Optional[bool]
+	tags: Optional[list[str]]
 
 # -------------------------------------------
 # Output models
@@ -164,7 +176,17 @@ async def upload_a_new_word(new_word: UploadWordFormat):
 
 	return new_word
 
-@app.delete("/api/delete_word", status_code=204)
+
+@app.patch("/api/update_word", response_model=Word, status_code=201, tags=["Recomended"])
+async def update_a_word(req: WordEdit):
+	# Check if the word exists
+	word = db.get(where("id") == req.id)
+	if not word:
+		raise HTTPException(status_code=404, detail="Word with id does not exist")
+
+	db.update(req.model_dump(), where("id") == req.id)
+
+	return db.get(where("id") == req.id)
 async def delete_a_word(req: DeleteWord):
 	if req.secretKey != getenv("SECRET_KEY"):
 		raise HTTPException(status_code=403, detail="Unauthorised, invalid secret key")
