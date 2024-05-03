@@ -71,7 +71,7 @@ jobs:
         platforms: linux/amd64,linux/arm64/v8
         push: true
         tags: |
-          ${{ vars.DOCKER_USERNAME }}/dict:latest
           ${{ vars.DOCKER_USERNAME }}/dict:${{ env.VERSION }}
+          ${{ vars.DOCKER_USERNAME }}/dict:latest
         build-args: VERSION=${{ env.VERSION }}
 
