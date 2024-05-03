@@ -98,7 +98,6 @@ class Word(BaseModel):
 	updoots: int
 	downdoots: int
 	isRobot: bool
-	tags: Optional[list[str]]
 
 class RandomWord(BaseModel):
 	word: Word
