@@ -2,8 +2,7 @@ from os import getenv
 from random import choice
 from enum import Enum
 import time
-from typing import Annotated, List, Optional
-from dotenv import load_dotenv
+from typing import Annotated
 
 from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -15,8 +14,6 @@ from random_word import RandomWords
 
 from tinydb import TinyDB, where
 from tinydb.operations import increment, decrement
-
-load_dotenv()
 
 db = TinyDB("dict-data/dict_db.json", create_dirs=True, separators=(",", ":"))
 app = FastAPI(
@@ -77,11 +74,12 @@ class WordEdit(BaseModel):
 	secretKey: str
 	word: Annotated[str, Query(max_length=50)] = None
 	description: Annotated[str, Query(max_length=170)] = None
-	creationDate: Optional[int]
-	uploader: Optional[str]
-	updoots: Optional[int]
-	downdoots: Optional[int]
-	isRobot: Optional[bool]
+	creationDate: int = None
+	uploader: str  = None
+	updoots: int = None
+	downdoots: int = None
+	isRobot: bool = None
+	tags: list[str] = None
 
 # -------------------------------------------
 # Output models
@@ -93,8 +91,8 @@ class Word(BaseModel):
 	id: int
 	word: str
 	description: str
-	creationDate: Optional[int]
-	uploader: Optional[str]
+	creationDate: int = None
+	uploader: str = None
 	updoots: int
 	downdoots: int
 	isRobot: bool

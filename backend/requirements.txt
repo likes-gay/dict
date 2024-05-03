@@ -3,4 +3,3 @@ pydantic
 random-word
 tinydb
 uvicorn
-python-dotenv
