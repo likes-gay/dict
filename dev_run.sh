@@ -6,8 +6,11 @@
 cd frontend
 npm install
 
-# Set the version env 
+# Set the version env
 export VERSION="DEV"
+
+# Set the secret key env
+export SECRET_KEY="DEV"
 
 # Build frontend and get its PID
 npm run build:dev &

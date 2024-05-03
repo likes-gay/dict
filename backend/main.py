@@ -2,10 +2,10 @@ from os import getenv
 from random import choice
 from enum import Enum
 import time
-from typing import List, Optional
+from typing import Annotated, List, Optional
 from dotenv import load_dotenv
 
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
@@ -34,13 +34,6 @@ app.add_middleware(
 )
 
 # -------------------------------------------
-# Prevent breaking changes to the db
-
-# Add the new keys into the database. So old data doesn't break everything
-db.update({"downdoots": 0}, ~ where("downdoots").exists())
-db.update({"isRobot": False}, ~ where("isRobot").exists())
-
-# -------------------------------------------
 # Input models
 
 class UpdootEnum(str, Enum):
@@ -54,8 +47,8 @@ class UpdateUpdoot(BaseModel):
 	prevUpdootState: UpdootEnum
 
 class UploadWordFormat(BaseModel):
-	word: str
-	description: str
+	word: Annotated[str, Query(max_length=50)]
+	description: Annotated[str, Query(max_length=50)]
 	creationDate: int
 	uploader: str
 	isRobot: bool
@@ -81,14 +74,14 @@ class SortByEnum(str, Enum):
 
 class WordEdit(BaseModel):
 	id: int
-	word: Optional[str]
-	description: Optional[str]
+	secretKey: str
+	word: Annotated[str, Query(max_length=50)] = None
+	description: Annotated[str, Query(max_length=170)] = None
 	creationDate: Optional[int]
 	uploader: Optional[str]
 	updoots: Optional[int]
 	downdoots: Optional[int]
 	isRobot: Optional[bool]
-	tags: Optional[list[str]]
 
 # -------------------------------------------
 # Output models
@@ -96,22 +89,23 @@ class WordEdit(BaseModel):
 class Count(BaseModel):
 	count: int
  
-class Record(BaseModel):
+class Word(BaseModel):
 	id: int
 	word: str
 	description: str
-	creationDate: int
-	uploader: str
+	creationDate: Optional[int]
+	uploader: Optional[str]
 	updoots: int
 	downdoots: int
 	isRobot: bool
+	tags: Optional[list[str]]
 
 class RandomWord(BaseModel):
-	word: Record
+	word: Word
 	realRandomWord: str
 
 class RangeOfWords(BaseModel):
-	dictWords: list[Record]
+	dictWords: list[Word]
 	max: int
 
 # -------------------------------------------
@@ -131,12 +125,12 @@ async def check_if_api_is_working():
 	pass
 
 
-@app.get("/api/num_of_words", response_model=Count)
+@app.get("/api/num_of_words", response_model=Count, tags=["Recomended"])
 async def count_of_words():
 	return {"count" : len(db)}
 
 
-@app.post("/api/upload_word", response_model=Record, status_code=201)
+@app.post("/api/upload_word", response_model=Word, status_code=201, tags=["Recomended"])
 async def upload_a_new_word(new_word: UploadWordFormat):
 	# Trim string values
 	word = new_word.word.strip()
@@ -179,6 +173,9 @@ async def upload_a_new_word(new_word: UploadWordFormat):
 
 @app.patch("/api/update_word", response_model=Word, status_code=201, tags=["Recomended"])
 async def update_a_word(req: WordEdit):
+	if req.secretKey != getenv("SECRET_KEY"):
+		raise HTTPException(status_code=403, detail="Unauthorised, invalid secret key")
+	
 	# Check if the word exists
 	word = db.get(where("id") == req.id)
 	if not word:
@@ -187,6 +184,8 @@ async def update_a_word(req: WordEdit):
 	db.update(req.model_dump(), where("id") == req.id)
 
 	return db.get(where("id") == req.id)
+
+@app.delete("/api/delete_word", status_code=204, tags=["Recomended"])
 async def delete_a_word(req: DeleteWord):
 	if req.secretKey != getenv("SECRET_KEY"):
 		raise HTTPException(status_code=403, detail="Unauthorised, invalid secret key")
@@ -199,7 +198,7 @@ async def delete_a_word(req: DeleteWord):
 	# Delete word from database
 	db.remove(doc_ids=[word.doc_id])
 
-@app.post("/api/update_updoot", response_model=Record, status_code=201)
+@app.post("/api/update_updoot", response_model=Word, status_code=201, tags=["Recomended"])
 async def update_words_updoot_count(req: UpdateUpdoot):
 	word_id = req.id
 	prevUpdootState = req.prevUpdootState.value + "doots"
@@ -222,7 +221,7 @@ async def update_words_updoot_count(req: UpdateUpdoot):
 
 	return db.get(where("id") == word_id)
 
-@app.get("/api/get_all_words", response_model=list[Record])
+@app.get("/api/get_all_words", response_model=list[Word], tags=["Recomended"])
 async def get_all_words(
 	sortby: SortByEnum = SortByEnum.TOTALDOOTS, orderby: DirEnum = DirEnum.DESC
 ):
@@ -247,18 +246,17 @@ async def get_all_words(
 		return sorted(db.all(), key=lambda x: x["word"].lower(), reverse=IS_REVERSED)
 
 
-@app.get("/api/get_word/{wordID}", response_model=Record)
+@app.get("/api/get_word/{wordID}", response_model=Word, tags=["Not recomended"])
 async def get_word_by_ID(wordID: int):
 	response = db.search(where("id") == wordID)
 	
 	if response:
 		return response[0]
 	
-	else:
-		raise HTTPException(status_code=404, detail="Item not found lol")
+	raise HTTPException(status_code=404, detail="Item not found lol")
 
 
-@app.get("/api/get_range_of_words", response_model=RangeOfWords)
+@app.get("/api/get_range_of_words", response_model=RangeOfWords, tags=["Not recomended"])
 async def get_range_of_words(offset: int = 0, size: int = 5):
 	data = db.all()
 
@@ -276,7 +274,7 @@ async def get_range_of_words(offset: int = 0, size: int = 5):
 	return {"dictWords": data[offset : offset + size], "max": len(db)}
 
 
-@app.get("/api/lookup_word/{word}", response_model=Record)
+@app.get("/api/lookup_word/{word}", response_model=Word, tags=["Not recomended"])
 async def lookup_word_by_string(word: str):
 	response = db.search(where("word") == word)
 
@@ -286,17 +284,17 @@ async def lookup_word_by_string(word: str):
 	raise HTTPException(status_code=404, detail="Word not found lol")
 
 
-@app.get("/api/get_uploaders_posts/{uploader}", response_model=list[Record])
+@app.get("/api/get_uploaders_posts/{uploader}", response_model=list[Word], tags=["Not recomended"])
 async def get_all_of_a_uploaders_posts(uploader):
-	return db.search(where("uploader") == uploader.capitalize())
+	return db.search(where("uploader").lower() == uploader.lower())
 
 
-@app.get("/api/get_all_uploaders", response_model=list[str])
+@app.get("/api/get_all_uploaders", response_model=list[str], tags=["Not recomended"])
 async def get_names_of_all_uploaders():
 	return list(set([x["uploader"] for x in db.search(where("uploader").exists())]))
 
 
-@app.get("/api/get_random_word", response_model=RandomWord)
+@app.get("/api/get_random_word", response_model=RandomWord, tags=["Not recomended"])
 async def get_a_random_word_and_one_from_the_english_dictionary():
 	return {
 		"word": choice(db.all()),
