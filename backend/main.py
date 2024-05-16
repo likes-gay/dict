@@ -2,7 +2,7 @@ from os import getenv
 from random import choice
 from enum import Enum
 import time
-from typing import Annotated
+from typing import Annotated, Optional
 
 from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -46,9 +46,9 @@ class UpdateUpdoot(BaseModel):
 class UploadWordFormat(BaseModel):
 	word: Annotated[str, Query(max_length=50)]
 	description: Annotated[str, Query(max_length=50)]
-	creationDate: int
-	uploader: str
-	isRobot: bool
+	creationDate: Optional[int] = None
+	uploader: Annotated[str, Query(max_length=30)] = "Unknown"
+	isRobot: Optional[bool] = False
 
 class DeleteWord(BaseModel):
 	id: int
@@ -72,14 +72,13 @@ class SortByEnum(str, Enum):
 class WordEdit(BaseModel):
 	id: int
 	secretKey: str
-	word: Annotated[str, Query(max_length=50)] = None
-	description: Annotated[str, Query(max_length=170)] = None
-	creationDate: int = None
-	uploader: str  = None
-	updoots: int = None
-	downdoots: int = None
-	isRobot: bool = None
-	tags: list[str] = None
+	word: Annotated[str, None, Query(max_length=50)] = None
+	description: Annotated[str, None, Query(max_length=170)] = None
+	creationDate: Optional[int] = None
+	uploader: Annotated[str, Query(max_length=30)] = None
+	updoots: Optional[int] = None
+	downdoots: Optional[int] = None
+	isRobot: Optional[bool] = None
 
 # -------------------------------------------
 # Output models
@@ -91,8 +90,8 @@ class Word(BaseModel):
 	id: int
 	word: str
 	description: str
-	creationDate: int = None
-	uploader: str = None
+	creationDate: int
+	uploader: str
 	updoots: int
 	downdoots: int
 	isRobot: bool
@@ -143,7 +142,7 @@ async def upload_a_new_word(new_word: UploadWordFormat):
 		raise HTTPException(status_code=400, detail="Word already exists")
 
 	if description == "":
-		raise HTTPException(status_code=400, detail="Description cannot be empty")
+		raise HTTPException(status_code=400, detail="Description after trimming of whitespace cannot be empty")
 
 	record = {
 		"word": word,
@@ -168,7 +167,7 @@ async def upload_a_new_word(new_word: UploadWordFormat):
 	return new_word
 
 
-@app.patch("/api/update_word", response_model=Word, status_code=201, tags=["Recomended"])
+@app.patch("/api/update_word", response_model=Word, tags=["Recomended"])
 async def update_a_word(req: WordEdit):
 	if req.secretKey != getenv("SECRET_KEY"):
 		raise HTTPException(status_code=403, detail="Unauthorised, invalid secret key")
@@ -178,7 +177,7 @@ async def update_a_word(req: WordEdit):
 	if not word:
 		raise HTTPException(status_code=404, detail="Word with id does not exist")
 
-	db.update(req.model_dump(), where("id") == req.id)
+	db.update(req.model_dump(exclude_none=True), where("id") == req.id)
 
 	return db.get(where("id") == req.id)
 

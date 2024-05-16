@@ -21,9 +21,9 @@ export type GetRangeOfWords = {
 export type	UploadWord = {
 	word: string;
 	description: string;
-	creationDate: number;
-	uploader: string;
-	isRobot: boolean;
+	creationDate?: number;
+	uploader?: string;
+	isRobot?: boolean;
 };
 
 export type	UploadWordError = {
