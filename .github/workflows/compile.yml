@@ -32,7 +32,7 @@ jobs:
       working-directory: frontend
 
     - name: Upload static files
-      uses: actions/upload-artifact@v4.6.0
+      uses: actions/upload-artifact@v4.6.1
       with:
         name: static
         path: static
