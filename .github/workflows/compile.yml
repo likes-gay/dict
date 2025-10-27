@@ -55,7 +55,7 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
 
     - name: Download static files
-      uses: actions/download-artifact@v5
+      uses: actions/download-artifact@v6
       with:
         name: static
         path: static
